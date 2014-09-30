@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="alfa1.veganscaner.app" >
-
-    <uses-permission android:name="android.permission.INTERNET" />
+    package="veganscanner.androclient" >
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-
         <activity
 
-            android:name="alfa1.veganscaner.app.main_screen"
+            android:name="veganscanner.androclient.main_screen"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             >
@@ -23,10 +20,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="alfa1.veganscaner.app.new_item1"
+            android:name="veganscanner.androclient.new_item1"
             android:label="Vegan Scaner" >
         </activity>
-
     </application>
 
 </manifest>
