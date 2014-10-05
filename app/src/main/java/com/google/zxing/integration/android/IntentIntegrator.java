@@ -97,6 +97,7 @@ public class IntentIntegrator {
     public static final int REQUEST_CODE = 0x0000c0de; // Only use bottom 16 bits
     private static final String TAG = IntentIntegrator.class.getSimpleName();
 
+    // TODO: THIS DOESN'T BELONG HERE! MOVE IT TO OUR PACKAGE!
     public static final String DEFAULT_TITLE = "Установим?";
     public static final String DEFAULT_MESSAGE =
             "Для корректной работы нашего веганского приложения, необходим компонент распознования штрих-кода,он абсолютно бесплатный";
