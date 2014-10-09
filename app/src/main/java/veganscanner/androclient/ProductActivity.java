@@ -12,22 +12,115 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import veganscanner.androclient.network.ProductLoaderResultHolder;
 import veganscanner.androclient.network.ProductLoadingAsyncTask;
 
 public class ProductActivity extends ActionBarActivity {
-    private static enum UserNetworkAction { SENDING_BARCODE_DATA, REPORTING_ERROR };
+    private Product currentProduct;
+    private boolean hasStarted;
+    private Toast toast;
 
     private ProgressDialog progressDialog; // TODO: use FragmentDialog?
-    private UserNetworkAction lastUserNetworkAction;
 
+    private final ProductLoadingAsyncTask.Listener productLoaderListener =
+            new ProductLoadingAsyncTask.Listener() {
+                @Override
+                public void onResult(final ProductLoaderResultHolder resultHolder) {
+                    currentProduct = resultHolder.getProduct();
+
+                    if (hasStarted) {
+                        displayCurrentProduct();
+
+                        // TODO: handle ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT
+                        if (resultHolder.getResultType()
+                                != ProductLoaderResultHolder.ResultType.SUCCESS) {
+                            toast.setText(R.string.product_activity_product_downloading_error_message);
+                            toast.show();
+                            App.logError(this, "a task failed at downloading a product");
+                        }
+                        // TODO: do something with it
+                        progressDialog.dismiss();
+                    }
+                }
+            };
+
+    /**
+     * Note: no null checking. Call it only if the activity has started.
+     */
+    private void displayCurrentProduct() {
+        if (currentProduct != null) {
+            ((TextView) findViewById(R.id.text_barcode)).
+                    setText(currentProduct.getBarcode());
+            ((TextView) findViewById(R.id.text_product_name)).
+                    setText(currentProduct.getName());
+            ((TextView) findViewById(R.id.text_company_name)).
+                    setText(currentProduct.getCompany());
+            ((TextView) findViewById(R.id.text_is_vegan)).
+                    setText(String.valueOf(currentProduct.isVegan()));
+            ((TextView) findViewById(R.id.text_is_vegetarian)).
+                    setText(String.valueOf(currentProduct.isVegetarian()));
+            ((TextView) findViewById(R.id.text_was_tested_on_animals)).
+                    setText(String.valueOf(currentProduct.wasTestedOnAnimals()));
+        } else {
+            ((TextView) findViewById(R.id.text_barcode)).setText("");
+            ((TextView) findViewById(R.id.text_product_name)).setText("");
+            ((TextView) findViewById(R.id.text_company_name)).setText("");
+            ((TextView) findViewById(R.id.text_is_vegan)).setText("");
+            ((TextView) findViewById(R.id.text_is_vegetarian)).setText("");
+            ((TextView) findViewById(R.id.text_was_tested_on_animals)).setText("");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        hasStarted = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        hasStarted = false;
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.product_activity_layout);
+        toast = Toast.makeText(this, "", Toast.LENGTH_LONG);
+    }
+
+    public void onButtonClick(final View button) {
+        // TODO: check whether the internet is connected
+        if (button.getId() == R.id.button_scan) {
+            final IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+            scanIntegrator.initiateScan();
+            // TODO: if the barcode scanner is not installed yet then the toast should not be shown
+            toast.setText(R.string.product_activity_before_scan_start_message);
+            toast.show();
+        }
+    }
+
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+            Toast.makeText(this, "Получен штрих-код", Toast.LENGTH_SHORT).show();
+            progressDialog = ProgressDialog.show(this, "", "Соединение с базой", true);
+
+            // TODO: no anonymous stuff here
+            final ProductLoadingAsyncTask task =
+                    new ProductLoadingAsyncTask(
+                            productLoaderListener
+                    );
+            task.execute(scanningResult.getContents());
+        } else {
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "Не получен штрих-код", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
     public void onERRORButtonClick(View view) {
-        lastUserNetworkAction = UserNetworkAction.REPORTING_ERROR;
-
         // TODO: return
 //        if (Barcode != null) {
 //            final DialogFragment errorReportDialog =
@@ -54,48 +147,6 @@ public class ProductActivity extends ActionBarActivity {
 //        } else {
 //            Toast.makeText(this, "В начале отсканируйте товар", Toast.LENGTH_LONG).show();
 //        }
-    }
-
-    public void onMyButtonClick(View view) {
-        lastUserNetworkAction = UserNetworkAction.SENDING_BARCODE_DATA;
-        IntentIntegrator scanIntegrator = new IntentIntegrator(this);
-        scanIntegrator.initiateScan();
-        Toast.makeText(this, "Поднесите камеру к штрих-коду", Toast.LENGTH_SHORT).show();
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-        if (scanningResult != null) {
-            Toast.makeText(this, "Получен штрих-код", Toast.LENGTH_SHORT).show();
-            progressDialog = ProgressDialog.show(this, "", "Соединение с базой", true);
-
-            // TODO: no anonymous stuff here
-            final ProductLoadingAsyncTask task =
-                    new ProductLoadingAsyncTask(
-                            new ProductLoadingAsyncTask.Listener() {
-                                @Override
-                                public void onResult(final ProductLoadingAsyncTask.ResultHolder resultHolder) {
-                                    // TODO: return toast?
-                                    if (resultHolder.getResultType()
-                                            == ProductLoadingAsyncTask.ResultType.SUCCESS) {
-                                        final Product product = resultHolder.getProduct();
-                                        ((TextView) findViewById(R.id.text_barcode)).setText(product.getBarcode());
-                                        ((TextView) findViewById(R.id.text_product_name)).setText(product.getName());
-                                        ((TextView) findViewById(R.id.text_company_name)).setText(product.getCompany());
-                                        ((TextView) findViewById(R.id.text_is_vegan)).setText(String.valueOf(product.isVegan()));
-                                        ((TextView) findViewById(R.id.text_is_vegetarian)).setText(String.valueOf(product.isVegetarian()));
-                                        ((TextView) findViewById(R.id.text_was_tested_on_animals)).setText(String.valueOf(product.wasTestedOnAnimals()));
-                                    }
-                                    progressDialog.dismiss();
-                                }
-                            }
-                    );
-            task.execute(scanningResult.getContents());
-        } else {
-            Toast toast = Toast.makeText(getApplicationContext(),
-                    "Не получен штрих-код", Toast.LENGTH_SHORT);
-            toast.show();
-        }
     }
 
     class MyTask extends AsyncTask<String, Void, String> {

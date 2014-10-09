@@ -20,45 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import veganscanner.androclient.App;
-import veganscanner.androclient.Product;
 
 public class ProductLoadingAsyncTask
-extends AsyncTask<String, Void, ProductLoadingAsyncTask.ResultHolder> {
+        extends AsyncTask<String, Void, ProductLoaderResultHolder> {
     private static final String REQUEST_URL = "http://lumeria.ru/vscaner/index.php";
     private static final String NO_SUCH_PRODUCT_RESPONSE = "731";
     private static final String BARCODE_POST_PARAMETER = "bcod";
     private static final String ENCODING = "UTF-8";
     private final Listener listener;
 
-    public static enum ResultType {
-        SUCCESS,
-        NO_SUCH_PRODUCT,
-        TOO_FEW_ARGUMENTS,
-        NETWORK_ERROR,
-        SERVER_RESPONSE_PARSING_ERROR
-    };
-
     public static interface Listener {
-        void onResult(final ResultHolder resultHolder);
-    }
-
-    // TODO: no nested classes
-    public static class ResultHolder {
-        private final ResultType resultType;
-        private final Product product;
-
-        private ResultHolder(final ResultType resultType, final Product product) {
-            this.resultType = resultType;
-            this.product = product;
-        }
-
-        public ResultType getResultType() {
-            return resultType;
-        }
-
-        public Product getProduct() {
-            return product;
-        }
+        void onResult(final ProductLoaderResultHolder resultHolder);
     }
 
     public ProductLoadingAsyncTask(final Listener listener) {
@@ -66,17 +38,18 @@ extends AsyncTask<String, Void, ProductLoadingAsyncTask.ResultHolder> {
     }
 
     @Override
-    protected void onPostExecute(final ResultHolder resultHolder) {
+    protected void onPostExecute(final ProductLoaderResultHolder resultHolder) {
         if (listener != null) {
             listener.onResult(resultHolder);
         }
     }
 
     @Override
-    protected ResultHolder doInBackground(final String... barcodes) {
+    protected ProductLoaderResultHolder doInBackground(final String... barcodes) {
         if (barcodes.length == 0) {
             App.logError(this, "need a barcode");
-            return new ResultHolder(ResultType.TOO_FEW_ARGUMENTS, null);
+            return new ProductLoaderResultHolder(
+                    ProductLoaderResultHolder.ResultType.TOO_FEW_ARGUMENTS);
         } else if (barcodes.length > 1) {
             App.logError(this, "too many arguments, only the first one will be processed");
         }
@@ -88,21 +61,23 @@ extends AsyncTask<String, Void, ProductLoadingAsyncTask.ResultHolder> {
             serverResponse = requestServerAbout(barcode);
         } catch (final IOException e) {
             App.logError(this, e.getMessage());
-            // TODO: maybe use null-object instead of nulls?
-            return new ResultHolder(ResultType.NETWORK_ERROR, null);
+            return new ProductLoaderResultHolder(
+                    ProductLoaderResultHolder.ResultType.NETWORK_ERROR);
         }
 
-        if (serverResponse == NO_SUCH_PRODUCT_RESPONSE) {
-            return new ResultHolder(ResultType.NO_SUCH_PRODUCT, null);
+        if (serverResponse.equals(NO_SUCH_PRODUCT_RESPONSE)) {
+            return new ProductLoaderResultHolder(
+                    ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT);
         }
 
         try {
-            return new ResultHolder(
-                    ResultType.SUCCESS,
+            return new ProductLoaderResultHolder(
+                    ProductLoaderResultHolder.ResultType.SUCCESS,
                     ServersProductsParser.parse(serverResponse, barcode));
         } catch (final ParseException e) {
             App.logError(this, e.getMessage());
-            return new ResultHolder(ResultType.SERVER_RESPONSE_PARSING_ERROR, null);
+            return new ProductLoaderResultHolder(
+                    ProductLoaderResultHolder.ResultType.SERVER_RESPONSE_PARSING_ERROR);
         }
     }
 

@@ -111,7 +111,7 @@
         android:layout_alignParentBottom="true"
         android:layout_toLeftOf="@+id/button_scan"
         android:layout_toStartOf="@+id/button_scan"
-        android:onClick="onERRORButtonClick"
+        android:onClick="onButtonClick"
         android:text="@string/product_activity_button_report_error" />
 
     <Button
@@ -120,7 +120,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:onClick="onMyButtonClick"
+        android:onClick="onButtonClick"
         android:text="@string/product_activity_button_scan" />
 
     <Button
@@ -129,7 +129,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/button_scan"
-        android:onClick="onINFButtonClick"
+        android:onClick="onButtonClick"
         android:text="@string/product_activity_button_show_more_info" />
 
 </RelativeLayout>

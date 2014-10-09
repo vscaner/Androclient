@@ -2,6 +2,11 @@
 <resources>
 
     <string name="app_name">VeganScanner</string>
+    <string name="barcode_app_install_request_title">Распознание штрих-кодов</string>
+    <string name="barcode_app_install_request_message">Для корректной работы нашего
+        приложения необходим компонент распознования штрих-кода, он абсолютно бесплатный</string>
+    <string name="barcode_app_install_request_reply_yes">Установить</string>
+    <string name="barcode_app_install_request_reply_no">Отмена</string>
     <string name="action_settings">Settings</string>
     <string name="internet_unavailable_dialog_title">Ой, нет соединения с сервером</string>
     <string name="internet_unavailable_dialog_text">Соединение с интернетом отсутсвет или
@@ -26,5 +31,8 @@
     <string name="product_activity_button_report_error">\"!\"</string>
     <string name="product_activity_button_scan">Сканировать</string>
     <string name="product_activity_button_show_more_info">\"\?\"</string>
+    <string name="product_activity_product_downloading_error_message">Ой, ошибка
+        загрузки данных из сервера</string>
+    <string name="product_activity_before_scan_start_message">Поднесите камеру к штрих-коду</string>
 
 </resources>

@@ -30,5 +30,13 @@ public class App extends Application {
     @Override
     public void onCreate() {
         context = getApplicationContext();
+        com.google.zxing.integration.android.IntentIntegrator.titleStringId =
+                R.string.barcode_app_install_request_title;
+        com.google.zxing.integration.android.IntentIntegrator.messageStringId =
+                R.string.barcode_app_install_request_message;
+        com.google.zxing.integration.android.IntentIntegrator.yesStringId =
+                R.string.barcode_app_install_request_reply_yes;
+        com.google.zxing.integration.android.IntentIntegrator.noStringId =
+                R.string.barcode_app_install_request_reply_no;
     }
 }
