@@ -30,13 +30,11 @@ import org.apache.http.util.EntityUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class new_item1 extends ActionBarActivity {
+public class ProductAdditionActivity extends ActionBarActivity {
 
     MyTask mt;
     TextView barcode;
@@ -152,7 +150,7 @@ public class new_item1 extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_item);
+        setContentView(R.layout.product_addition_activity_layout);
         Intent intent = getIntent();
         barcodfrom1 = intent.getStringExtra("key");
         animaltests = (CheckBox) findViewById(R.id.checkBox3);

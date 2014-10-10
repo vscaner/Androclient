@@ -12,7 +12,7 @@
         android:name="veganscanner.androclient.App">
         <activity
 
-            android:name=".ProductActivity"
+            android:name=".ProductDescriptionActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             >
@@ -23,7 +23,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="veganscanner.androclient.new_item1"
+            android:name=".ProductAdditionActivity"
             android:label="Vegan Scaner" >
         </activity>
     </application>

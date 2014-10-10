@@ -15,7 +15,7 @@ import com.google.zxing.integration.android.IntentResult;
 import veganscanner.androclient.network.ProductLoaderResultHolder;
 import veganscanner.androclient.network.ProductLoadingAsyncTask;
 
-public class ProductActivity extends ActionBarActivity {
+public class ProductDescriptionActivity extends ActionBarActivity {
     private Product currentProduct;
     private boolean hasStarted;
     private Toast toast;
@@ -86,7 +86,7 @@ public class ProductActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.product_activity_layout);
+        setContentView(R.layout.product_description_activity_layout);
         toast = Toast.makeText(this, "", Toast.LENGTH_LONG);
     }
 
@@ -129,7 +129,7 @@ public class ProductActivity extends ActionBarActivity {
 //                        public void onSendClicked(final String errorReportText) {
 //                            comment = errorReportText;
 //                            myTask = new MyTask();
-//                            progressDialog = ProgressDialog.show(ProductActivity.this, "", "Соединение с базой", true);
+//                            progressDialog = ProgressDialog.show(ProductDescriptionActivity.this, "", "Соединение с базой", true);
 //                            myTask.execute();
 //                        }
 //                    });
@@ -214,7 +214,7 @@ public class ProductActivity extends ActionBarActivity {
 //                    productNotFoundDialog.show(getSupportFragmentManager(), "dialog"); // TODO: magical word
 //                } else if (b == 0) {
 //                    addbarcode = true;
-//                    Toast.makeText(ProductActivity.this, "Ваше обращение принято! Орномное спасибо за участие в проекте!", Toast.LENGTH_LONG).show();
+//                    Toast.makeText(ProductDescriptionActivity.this, "Ваше обращение принято! Орномное спасибо за участие в проекте!", Toast.LENGTH_LONG).show();
 //                }
 //            } catch (Exception e) {
 //            }
@@ -231,7 +231,7 @@ public class ProductActivity extends ActionBarActivity {
 //                    if (j == 0) {
 //                        vegantext = "ДА";
 //                        vegeteriatext = "ДА";
-//                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_activity_layout);
+//                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_description_activity_layout);
 //                        relativeLayout.setBackgroundResource(R.drawable.ok);
 //                    } else {
 //                        vegantext = "НЕТ";
@@ -239,10 +239,10 @@ public class ProductActivity extends ActionBarActivity {
 //                        int j1 = Integer.parseInt(parts[2]);//ПРОВЕРКА НА ВЕГЕТАРИАНСТВО
 //                        if (j1 == 0) {
 //                            vegeteriatext = "ДА";
-//                            RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_activity_layout);
+//                            RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_description_activity_layout);
 //                            relativeLayout.setBackgroundResource(R.drawable.normal);
 //                        } else {
-//                            RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_activity_layout);
+//                            RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_description_activity_layout);
 //                            relativeLayout.setBackgroundResource(R.drawable.no);
 //                            vegeteriatext = "НЕТ";
 //                            ((TextView) findViewById(R.id.text_is_vegetarian)).setText(vegeteriatext);
@@ -262,7 +262,7 @@ public class ProductActivity extends ActionBarActivity {
 //                    ((TextView) findViewById(R.id.text_is_vegetarian)).setText(vegeteriatext);
 //                    ((TextView) findViewById(R.id.text_was_tested_on_animals)).setText(inanimals);
 //                    if (j3 == 1) {
-//                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_activity_layout);
+//                        RelativeLayout relativeLayout = (RelativeLayout) findViewById(R.id.product_description_activity_layout);
 //                        relativeLayout.setBackgroundResource(R.drawable.no);
 //                        ((TextView) findViewById(R.id.text_was_tested_on_animals)).setText(inanimals);
 //                    }

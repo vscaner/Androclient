@@ -29,7 +29,7 @@ public class ProductNotFoundDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int arg1) {
                 dismiss();
 
-                Intent myIntent = new Intent(getActivity(), new_item1.class);
+                Intent myIntent = new Intent(getActivity(), ProductAdditionActivity.class);
                 myIntent.putExtra("key", productBarcode); // TODO: magical word
                 getActivity().startActivity(myIntent);
             }
