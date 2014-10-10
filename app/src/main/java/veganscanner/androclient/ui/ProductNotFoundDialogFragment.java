@@ -1,4 +1,4 @@
-package veganscanner.androclient;
+package veganscanner.androclient.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,6 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+
+import veganscanner.androclient.R;
 
 public class ProductNotFoundDialogFragment extends DialogFragment {
     private String productBarcode;

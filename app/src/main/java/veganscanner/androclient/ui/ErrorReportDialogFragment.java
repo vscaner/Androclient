@@ -1,4 +1,4 @@
-package veganscanner.androclient;
+package veganscanner.androclient.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,6 +8,8 @@ import android.support.v4.app.DialogFragment;
 import android.text.InputType;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import veganscanner.androclient.R;
 
 public class ErrorReportDialogFragment extends DialogFragment {
     private Listener listener;
@@ -20,7 +22,7 @@ public class ErrorReportDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState) {
-        // TODO: this is a bad way to tell the information, Activity instead of a Dialog would solve the problem
+        // TODO: this is a bad way to tell the information, replacing Dialog with Activity would solve the problem
         Toast.makeText(
                 getActivity(),
                 R.string.error_report_dialog_info_toast,
@@ -42,7 +44,7 @@ public class ErrorReportDialogFragment extends DialogFragment {
                 }
             }
         });
-        //"Отменить"
+
         builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

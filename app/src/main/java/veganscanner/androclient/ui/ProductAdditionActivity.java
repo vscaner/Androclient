@@ -1,4 +1,4 @@
-package veganscanner.androclient;
+package veganscanner.androclient.ui;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.List;
+
+import veganscanner.androclient.R;
 
 
 public class ProductAdditionActivity extends ActionBarActivity {
