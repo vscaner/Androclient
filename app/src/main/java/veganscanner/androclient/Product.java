@@ -8,7 +8,30 @@ public final class Product {
     private final boolean isVegetarian;
     private final boolean wasTestedOnAnimals;
     private final String comment;
+    private final boolean isFullyInitialized;
 
+    /**
+     * @param barcode must be valid (BarcodeToolkit.isValid(..) == true).
+     * @throws java.lang.IllegalAccessException if barcode is not valid.
+     */
+    public Product(final String barcode) throws IllegalArgumentException {
+        if (!BarcodeToolkit.isValid(barcode)) {
+            throw new IllegalArgumentException("barcode is not valid");
+        }
+        this.barcode = barcode;
+        this.name = "";
+        this.company = "";
+        this.isVegan = false;
+        this.isVegetarian = false;
+        this.wasTestedOnAnimals = true;
+        this.comment = "";
+        this.isFullyInitialized = false;
+    }
+
+    /**
+     * @param barcode must be valid (BarcodeToolkit.isValid(..) == true).
+     * @throws java.lang.IllegalAccessException if barcode is not valid.
+     */
     public Product(
             final String barcode,
             final String name,
@@ -16,7 +39,13 @@ public final class Product {
             final boolean isVegan,
             final boolean isVegetarian,
             final boolean wasTestedOnAnimals,
-            final String comment) {
+            final String comment) throws IllegalArgumentException  {
+        if (!BarcodeToolkit.isValid(barcode)) {
+            throw new IllegalArgumentException("barcode is not valid");
+        }
+        App.assertCondition(name != null);
+        App.assertCondition(company != null);
+        App.assertCondition(comment != null);
         this.barcode = barcode;
         this.name = name;
         this.company = company;
@@ -24,6 +53,7 @@ public final class Product {
         this.isVegetarian = isVegetarian;
         this.wasTestedOnAnimals = wasTestedOnAnimals;
         this.comment = comment;
+        this.isFullyInitialized = true;
     }
 
     public String getBarcode() {
@@ -54,12 +84,22 @@ public final class Product {
         return comment;
     }
 
+    /**
+     * Most likely a product will not be valid if it was not created by user
+     * or by server.
+     * Product's barcode is guaranteed to be valid.
+     */
+    public boolean isValid() {
+        return isFullyInitialized;
+    }
+
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
         builder.append("\"Product\": {").append("\n")
                .append("\t\"name\": ").append(name).append("\n")
                .append("\t\"barcode\": ").append(barcode).append("\n")
+               .append("\t\"isFullyInitialized\": ").append(isFullyInitialized).append("\n")
                .append("}");
         return builder.toString();
     }

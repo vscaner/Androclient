@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 
 import veganscanner.androclient.R;
 
+// TODO: return using of this dialog?
 public class InternetUnavailableDialogFragment extends DialogFragment {
     private Runnable onPositiveButtonRunnable = null;
 
@@ -37,9 +38,6 @@ public class InternetUnavailableDialogFragment extends DialogFragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int arg1) {
                         dismiss();
-                        //TODO: return this functionality somehow
-//                Toast.makeText(context, "Ничего страшного! Попробуйте позже,когда установите стабильное соединение с интернетом",
-//                        Toast.LENGTH_LONG).show();
                     }
                 });
 

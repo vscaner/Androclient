@@ -1,6 +1,7 @@
 package veganscanner.androclient.network;
 
 import veganscanner.androclient.App;
+import veganscanner.androclient.BarcodeToolkit;
 import veganscanner.androclient.Product;
 
 public class ProductLoaderResultHolder {
@@ -10,7 +11,6 @@ public class ProductLoaderResultHolder {
     public static enum ResultType {
         SUCCESS,
         NO_SUCH_PRODUCT,
-        TOO_FEW_ARGUMENTS,
         NETWORK_ERROR,
         SERVER_RESPONSE_PARSING_ERROR
     };
@@ -18,21 +18,31 @@ public class ProductLoaderResultHolder {
     /**
      * Should only be use for presenting resultType != ResultType.SUCCESS.
      */
-    ProductLoaderResultHolder(final ResultType resultType) {
+    ProductLoaderResultHolder(final ResultType resultType, final String barcode) {
+        App.assertCondition(resultType != null);
+        App.assertCondition(BarcodeToolkit.isValid(barcode));
         this.resultType = resultType;
-        this.product = null;
+        this.product = new Product(barcode);
         App.assertCondition(resultType != ResultType.SUCCESS);
     }
 
     ProductLoaderResultHolder(final ResultType resultType, final Product product) {
+        App.assertCondition(resultType != null);
+        App.assertCondition(product != null);
         this.resultType = resultType;
         this.product = product;
     }
 
+    /**
+     * @return not null.
+     */
     public ResultType getResultType() {
         return resultType;
     }
 
+    /**
+     * @return not null.
+     */
     public Product getProduct() {
         return product;
     }

@@ -36,7 +36,7 @@ public class ErrorReportDialogFragment extends DialogFragment {
         input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT);
         builder.setView(input);
 
-        builder.setPositiveButton(R.string.send, new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.raw_send, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (listener != null) {

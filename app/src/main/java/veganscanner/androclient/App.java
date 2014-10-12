@@ -2,6 +2,8 @@ package veganscanner.androclient;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 public class App extends Application {
@@ -9,6 +11,10 @@ public class App extends Application {
 
     public static Context getContext() {
         return context;
+    }
+
+    public static String getStringWith(final int stringId) {
+        return context.getString(stringId);
     }
 
     public static String getName() {
@@ -20,11 +26,23 @@ public class App extends Application {
     }
 
     public static void logDebug(final Object requester, final String message) {
-        Log.e(getName(), requester.getClass().toString() + ": " + message);
+        Log.d(getName(), requester.getClass().toString() + ": " + message);
+    }
+
+    public static void wtf(final Object requester, final String message) {
+        Log.wtf(getName(), requester.getClass().toString() + ": " + message);
     }
 
     public static void assertCondition(final boolean condition) {
         assert(condition);
+    }
+
+    public static boolean isOnline() {
+        final ConnectivityManager connectivityManager =
+                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+
+        return networkInfo != null && networkInfo.isConnected();
     }
 
     @Override
