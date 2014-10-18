@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="alfa1.veganscaner.app" >
+    package="vscanner.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name="vscanner.android.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-
+        android:theme="@style/AppTheme">
         <activity
-
-            android:name="alfa1.veganscaner.app.main_screen"
+            android:name="vscanner.android.ui.ProductDescriptionActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
-            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="alfa1.veganscaner.app.new_item1"
-            android:label="Vegan Scaner" >
-        </activity>
-
+            android:name="vscanner.android.ui.ProductAdditionActivity"
+            android:label="@string/app_name" />
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="de80313f5f43d719218414e4cc41762af7e4e352"/>
     </application>
 
 </manifest>
