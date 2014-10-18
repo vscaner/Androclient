@@ -1,4 +1,4 @@
-package veganscanner.androclient;
+package vscanner.android;
 
 public class BarcodeToolkit {
     private BarcodeToolkit() {

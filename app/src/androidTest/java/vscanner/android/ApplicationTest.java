@@ -1,4 +1,4 @@
-package veganscanner.androclient;
+package vscanner.android;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

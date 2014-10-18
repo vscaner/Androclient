@@ -1,4 +1,4 @@
-package veganscanner.androclient.network;
+package vscanner.android.network;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -8,7 +8,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import veganscanner.androclient.App;
+import vscanner.android.App;
+import vscanner.android.BarcodeToolkit;
+import vscanner.android.Product;
 
 public class ProductLoadingAsyncTask
         extends ProductAsyncTaskBase<Void, Void, ProductLoaderResultHolder> {
@@ -19,7 +21,7 @@ public class ProductLoadingAsyncTask
     @Override
     protected List<NameValuePair> getPostParameters() {
         final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-        postParameters.add(new BasicNameValuePair(ServerConstants.POST_PARAMETER_BARCODE, barcode));
+        postParameters.add(new BasicNameValuePair("bcod", barcode));
         return postParameters;
     }
 
@@ -28,15 +30,17 @@ public class ProductLoadingAsyncTask
     }
 
     /**
-     * @param barcode must not be null.
+     * @param barcode must not be valid, ie (BarcodeToolkit.isValid(barcode) == true)
+     * @throws IllegalArgumentException if any argument is not valid
      */
-    public ProductLoadingAsyncTask(final String barcode, final Listener listener) {
+    public ProductLoadingAsyncTask(
+            final String barcode,
+            final Listener listener) throws IllegalArgumentException {
         super(REQUEST_URL);
         this.listener = listener;
-        if (barcode == null) {
-            throw new IllegalArgumentException("barcode must not be null");
+        if (!BarcodeToolkit.isValid(barcode)) {
+            throw new IllegalArgumentException("barcode must be valid");
         }
-        App.assertCondition(barcode.length() > 0);
         this.barcode = barcode;
     }
 
@@ -54,23 +58,21 @@ public class ProductLoadingAsyncTask
             serverResponse = queryServer();
         } catch (final IOException e) {
             App.logError(this, e.getMessage());
-            return new ProductLoaderResultHolder(
-                    ProductLoaderResultHolder.ResultType.NETWORK_ERROR, barcode);
+            return ProductLoaderResultHolder.createWithNetworkError(barcode);
         }
 
         if (serverResponse.equals(ServerConstants.RESPONSE_NO_SUCH_PRODUCT)) {
-            return new ProductLoaderResultHolder(
-                    ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT, barcode);
+            return ProductLoaderResultHolder.createWithNoSuchProduct(barcode);
         }
 
+        final Product product;
         try {
-            return new ProductLoaderResultHolder(
-                    ProductLoaderResultHolder.ResultType.SUCCESS,
-                    ServersProductsParser.parse(serverResponse, barcode));
+            product = ServersProductsParser.parse(serverResponse, barcode);
         } catch (final ParseException e) {
             App.logError(this, e.getMessage());
-            return new ProductLoaderResultHolder(
-                    ProductLoaderResultHolder.ResultType.SERVER_RESPONSE_PARSING_ERROR, barcode);
+            return ProductLoaderResultHolder.createWithServerErrorParsingError(barcode);
         }
+
+        return ProductLoaderResultHolder.createWithSuccess(product);
     }
 }

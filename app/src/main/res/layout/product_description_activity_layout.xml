@@ -8,11 +8,13 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="veganscanner.androclient.ui.ProductDescriptionActivity">
+    tools:context="vscanner.android.ui.ProductDescriptionActivity">
 
     <ScrollView
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/button_scan"
+        android:layout_alignParentTop="true">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -26,10 +28,11 @@
 
                 <TextView
                     style="@style/ProductActivityPropertyName"
-                    android:text="@string/product_activity_barcode_title"/>
+                    android:text="@string/product_description_activity_barcode_title" />
+
                 <TextView
                     android:id="@+id/text_barcode"
-                    style="@style/ProductActivityTextView"/>
+                    style="@style/ProductActivityTextView" />
             </LinearLayout>
 
             <LinearLayout
@@ -40,7 +43,8 @@
 
                 <TextView
                     style="@style/ProductActivityPropertyName"
-                    android:text="@string/product_activity_product_title" />
+                    android:text="@string/product_description_activity_product_name_title" />
+
                 <TextView
                     android:id="@+id/text_product_name"
                     style="@style/ProductActivityTextView" />
@@ -54,7 +58,8 @@
 
                 <TextView
                     style="@style/ProductActivityPropertyName"
-                    android:text="@string/product_activity_company_title" />
+                    android:text="@string/product_description_activity_company_title" />
+
                 <TextView
                     android:id="@+id/text_company_name"
                     style="@style/ProductActivityTextView" />
@@ -68,7 +73,8 @@
 
                 <TextView
                     style="@style/ProductActivityPropertyName"
-                    android:text="@string/product_activity_vegan_title" />
+                    android:text="@string/product_description_activity_vegan_title" />
+
                 <TextView
                     android:id="@+id/text_is_vegan"
                     style="@style/ProductActivityTextView" />
@@ -82,7 +88,8 @@
 
                 <TextView
                     style="@style/ProductActivityPropertyName"
-                    android:text="@string/product_activity_vegetarian_title" />
+                    android:text="@string/product_description_activity_vegetarian_title" />
+
                 <TextView
                     android:id="@+id/text_is_vegetarian"
                     style="@style/ProductActivityTextView" />
@@ -96,7 +103,8 @@
 
                 <TextView
                     style="@style/ProductActivityPropertyName"
-                    android:text="@string/product_activity_tested_on_animals_title" />
+                    android:text="@string/product_description_activity_tested_on_animals_title" />
+
                 <TextView
                     android:id="@+id/text_was_tested_on_animals"
                     style="@style/ProductActivityTextView" />
@@ -113,7 +121,7 @@
         android:layout_toLeftOf="@+id/button_scan"
         android:layout_toStartOf="@+id/button_scan"
         android:onClick="onButtonClick"
-        android:text="@string/product_activity_button_report_error" />
+        android:text="@string/product_description_activity_button_report_error" />
 
     <Button
         android:id="@+id/button_scan"
@@ -122,7 +130,7 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:onClick="onButtonClick"
-        android:text="@string/product_activity_button_scan" />
+        android:text="@string/product_description_activity_button_scan" />
 
     <Button
         android:id="@+id/button_show_comment"
@@ -132,6 +140,6 @@
         android:layout_alignParentBottom="true"
         android:layout_toRightOf="@+id/button_scan"
         android:onClick="onButtonClick"
-        android:text="@string/product_activity_button_show_more_info" />
+        android:text="@string/product_description_activity_button_show_more_info" />
 
 </RelativeLayout>

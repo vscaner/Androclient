@@ -1,4 +1,4 @@
-package veganscanner.androclient.ui;
+package vscanner.android.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,15 +6,19 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-import veganscanner.androclient.R;
+import vscanner.android.R;
 
 // TODO: return using of this dialog?
 public class InternetUnavailableDialogFragment extends DialogFragment {
-    private Runnable onPositiveButtonRunnable = null;
+    private Runnable onPositiveButtonRunnable;
+    private Runnable onNegativeButtonRunnable;
 
-    public static InternetUnavailableDialogFragment create(final Runnable onPositiveButtonRunnable) {
+    public static InternetUnavailableDialogFragment create(
+            final Runnable onPositiveButtonRunnable,
+            final Runnable onNegativeButtonRunnable) {
         final InternetUnavailableDialogFragment instance = new InternetUnavailableDialogFragment();
         instance.onPositiveButtonRunnable = onPositiveButtonRunnable;
+        instance.onNegativeButtonRunnable = onNegativeButtonRunnable;
         return instance;
     }
 
@@ -38,6 +42,9 @@ public class InternetUnavailableDialogFragment extends DialogFragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int arg1) {
                         dismiss();
+                        if (onNegativeButtonRunnable != null) {
+                            onNegativeButtonRunnable.run();
+                        }
                     }
                 });
 

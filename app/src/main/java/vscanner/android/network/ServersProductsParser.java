@@ -1,9 +1,9 @@
-package veganscanner.androclient.network;
+package vscanner.android.network;
 
 import java.text.ParseException;
 
-import veganscanner.androclient.App;
-import veganscanner.androclient.Product;
+import vscanner.android.App;
+import vscanner.android.Product;
 
 class ServersProductsParser {
     private static final char SEPARATOR_CHAR = '§';
@@ -53,7 +53,7 @@ class ServersProductsParser {
         final String name = arguments[0];
         final boolean isVegan = arguments[1].equals("0");
         final boolean isVegetarian = arguments[2].equals("0");
-        final boolean wasTestedOnAnimals = !arguments[3].equals("0");
+        final boolean wasTestedOnAnimals = arguments[3].equals("0");
         final String company = arguments[5];
         final String comment = arguments[6];
 

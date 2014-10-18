@@ -1,47 +1,76 @@
-package veganscanner.androclient.ui;
+package vscanner.android.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
-import veganscanner.androclient.App;
-import veganscanner.androclient.HumanizingToolkit;
-import veganscanner.androclient.Product;
-import veganscanner.androclient.R;
-import veganscanner.androclient.network.ErrorReportingAsyncTask;
-import veganscanner.androclient.network.ProductLoaderResultHolder;
-import veganscanner.androclient.network.ProductLoadingAsyncTask;
+import vscanner.android.App;
+import vscanner.android.BarcodeToolkit;
+import vscanner.android.HumanizingToolkit;
+import vscanner.android.Product;
+import vscanner.android.R;
+import vscanner.android.network.ErrorReportingAsyncTask;
+import vscanner.android.network.ProductLoaderResultHolder;
+import vscanner.android.network.ProductLoadingAsyncTask;
 
-public class ProductDescriptionActivity extends ActionBarActivity {
-    private static final String PROGRESS_DIALOG_TAG = "progress_dialog";
+public class ProductDescriptionActivity extends MyActivityBase {
     private static final String GENERAL_DIALOG_TAG = "dialog";
     private Product currentProduct;
     private boolean hasStarted;
-    private Toast toast;
 
-    private final ErrorReportDialogFragment.Listener errorReporterListener =
+    // TODO: ZOMFG! 3 listeners and 2 runnables! That's too much!
+    // TODO: either create a error reporting Activity already or.. or clean it up somehow else!
+    private String lastErrorReportText;
+    private Runnable errorReportResender = new Runnable() {
+        @Override
+        public void run() {
+            errorReportingDialogListener.onSendClicked(lastErrorReportText);
+        }
+    };
+    private Runnable progressDialogHider = new Runnable() {
+        @Override
+        public void run() {
+            hideProgressDialog();
+        }
+    };
+
+    private final ErrorReportingAsyncTask.Listener errorReportingTaskListener =
+            new ErrorReportingAsyncTask.Listener() {
+                @Override
+                public void onResult(final boolean success) {
+                    if (success) {
+                        hideProgressDialog();
+                    } else if (errorReportResender != null) {
+                        final InternetUnavailableDialogFragment dialog =
+                                InternetUnavailableDialogFragment.create(
+                                        errorReportResender,
+                                        progressDialogHider);
+                        dialog.show(getSupportFragmentManager(), GENERAL_DIALOG_TAG);
+                    }
+                }
+            };
+
+    private final ErrorReportDialogFragment.Listener errorReportingDialogListener =
             new ErrorReportDialogFragment.Listener() {
                 @Override
                 public void onSendClicked(final String errorReportText) {
+                    App.assertCondition(errorReportText != null);
+                    lastErrorReportText = errorReportText;
+
                     final ErrorReportingAsyncTask task =
                             new ErrorReportingAsyncTask(
                                     currentProduct.getBarcode(),
-                                    errorReportText);
+                                    errorReportText,
+                                    errorReportingTaskListener);
+                    showProgressDialog(R.string.raw_connecting_to_database);
                     task.execute();
-                    // TODO: memorize the message
-                    // I.o. check whether the internet is connected,
-                    // if it is, then send the message
-                    // else save the message (for sending it later) and notify the user.
                 }
             };
 
@@ -50,7 +79,7 @@ public class ProductDescriptionActivity extends ActionBarActivity {
                 @Override
                 public void onResult(final ProductLoaderResultHolder resultHolder) {
                     final Product resultProduct = resultHolder.getProduct();
-                    currentProduct = resultProduct.isValid() ? resultProduct : null;
+                    currentProduct = resultProduct.isFullyInitialized() ? resultProduct : null;
 
                     if (hasStarted) {
                         displayCurrentProduct();
@@ -61,7 +90,7 @@ public class ProductDescriptionActivity extends ActionBarActivity {
                         if (resultType == ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT) {
                             showProductNotFoundDialog(resultProduct.getBarcode());
                         } else if (resultType != ProductLoaderResultHolder.ResultType.SUCCESS) {
-                            showToastWith(R.string.product_activity_product_downloading_error_message);
+                            showToastWith(R.string.product_description_activity_product_downloading_error_message);
                             App.logError(this, "a task failed at downloading a product");
                         }
                         hideProgressDialog();
@@ -104,27 +133,6 @@ public class ProductDescriptionActivity extends ActionBarActivity {
                 GENERAL_DIALOG_TAG);
     }
 
-    private void showToastWith(final int stringId) {
-        toast.setText(stringId);
-        toast.show();
-    }
-
-    private void showToastWith(final String string) {
-        toast.setText(string);
-        toast.show();
-    }
-
-    private void hideProgressDialog() {
-        final Fragment progressDialog =
-                getSupportFragmentManager().findFragmentByTag(PROGRESS_DIALOG_TAG);
-        if (progressDialog != null) {
-            final FragmentTransaction transaction =
-                    getSupportFragmentManager().beginTransaction();
-            transaction.remove(progressDialog);
-            transaction.commit();
-        }
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -140,8 +148,8 @@ public class ProductDescriptionActivity extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Crashlytics.start(this);
         setContentView(R.layout.product_description_activity_layout);
-        toast = Toast.makeText(this, "", Toast.LENGTH_LONG);
     }
 
     public void onButtonClick(final View button) {
@@ -150,22 +158,22 @@ public class ProductDescriptionActivity extends ActionBarActivity {
                 final IntentIntegrator scanIntegrator = new IntentIntegrator(this);
                 final AlertDialog installScannerAppTip = scanIntegrator.initiateScan();
                 if (installScannerAppTip == null) {
-                    showToastWith(R.string.product_activity_before_scan_start_message);
+                    showToastWith(R.string.product_description_activity_before_scan_start_message);
                 }
             } else {
-                showToastWith(R.string.internet_connection_is_not_available);
+                showToastWith(R.string.raw_internet_connection_is_not_available);
             }
         } else if (button.getId() == R.id.button_report_error) {
             if (App.isOnline()) {
                 if (currentProduct != null) {
                     final DialogFragment errorReportDialog =
-                            ErrorReportDialogFragment.create(errorReporterListener);
+                            ErrorReportDialogFragment.create(errorReportingDialogListener);
                     errorReportDialog.show(getSupportFragmentManager(), GENERAL_DIALOG_TAG);
                 } else {
                     showToastWith(R.string.raw_scan_a_barcode_first);
                 }
             } else {
-                showToastWith(R.string.internet_connection_is_not_available);
+                showToastWith(R.string.raw_internet_connection_is_not_available);
             }
         } else if (button.getId() == R.id.button_show_comment) {
             if (currentProduct != null) {
@@ -183,12 +191,9 @@ public class ProductDescriptionActivity extends ActionBarActivity {
                 IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
         if (scanningResult != null) {
             final String scannedBarcode = scanningResult.getContents();
-            if (scannedBarcode != null) {
+            if (BarcodeToolkit.isValid(scannedBarcode)) {
                 showToastWith(R.string.raw_barcode_received);
-
-                final DialogFragment progressDialog =
-                        DatabaseConnectionProgressDialogFragment.create();
-                progressDialog.show(getSupportFragmentManager(), PROGRESS_DIALOG_TAG);
+                showProgressDialog(R.string.raw_connecting_to_database);
 
                 final ProductLoadingAsyncTask task =
                         new ProductLoadingAsyncTask(

@@ -1,4 +1,4 @@
-package veganscanner.androclient.ui;
+package vscanner.android.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
-import veganscanner.androclient.R;
+import vscanner.android.R;
 
 public class ProductNotFoundDialogFragment extends DialogFragment {
     private String productBarcode;
@@ -32,7 +32,7 @@ public class ProductNotFoundDialogFragment extends DialogFragment {
                 dismiss();
 
                 Intent myIntent = new Intent(getActivity(), ProductAdditionActivity.class);
-                myIntent.putExtra("key", productBarcode); // TODO: magical word
+                myIntent.putExtra(ProductAdditionActivity.BARCODE_EXTRA, productBarcode);
                 getActivity().startActivity(myIntent);
             }
         });

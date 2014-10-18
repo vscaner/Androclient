@@ -1,4 +1,4 @@
-package veganscanner.androclient;
+package vscanner.android;
 
 public final class Product {
     private final String barcode;
@@ -12,7 +12,7 @@ public final class Product {
 
     /**
      * @param barcode must be valid (BarcodeToolkit.isValid(..) == true).
-     * @throws java.lang.IllegalAccessException if barcode is not valid.
+     * @throws java.lang.IllegalArgumentException if barcode is not valid.
      */
     public Product(final String barcode) throws IllegalArgumentException {
         if (!BarcodeToolkit.isValid(barcode)) {
@@ -30,7 +30,7 @@ public final class Product {
 
     /**
      * @param barcode must be valid (BarcodeToolkit.isValid(..) == true).
-     * @throws java.lang.IllegalAccessException if barcode is not valid.
+     * @throws java.lang.IllegalArgumentException if barcode is not valid.
      */
     public Product(
             final String barcode,
@@ -85,11 +85,10 @@ public final class Product {
     }
 
     /**
-     * Most likely a product will not be valid if it was not created by user
-     * or by server.
+     * Most likely a product will not be fullyInitialized if it was not created by a user or by the server.
      * Product's barcode is guaranteed to be valid.
      */
-    public boolean isValid() {
+    public boolean isFullyInitialized() {
         return isFullyInitialized;
     }
 

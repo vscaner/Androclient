@@ -1,6 +1,7 @@
-package veganscanner.androclient.network;
+package vscanner.android.network;
 
 import android.os.AsyncTask;
+import android.webkit.URLUtil;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -18,19 +19,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import veganscanner.androclient.App;
+import vscanner.android.App;
 
 abstract class ProductAsyncTaskBase<T1, T2, T3> extends AsyncTask<T1, T2, T3> {
     private static final String ENCODING = "UTF-8";
     private final String url;
 
     /**
-     * @param url must be a valid url
+     * @param url must be a valid url, ie (URLUtil.isValidUrl(url) == true)
+     * @throws IllegalArgumentException if any argument is not valid
      */
-    protected ProductAsyncTaskBase(final String url) {
-        // Check whether the url is valid will be done during work with it.
-        // TODO: check it ^ here, in the constructor.
-        App.assertCondition(url != null);
+    protected ProductAsyncTaskBase(final String url) throws IllegalArgumentException {
+        if (!URLUtil.isValidUrl(url)) {
+            throw new IllegalArgumentException("given url (" + url + ") is not valid");
+        }
         this.url = url;
     }
 
@@ -64,8 +66,11 @@ abstract class ProductAsyncTaskBase<T1, T2, T3> extends AsyncTask<T1, T2, T3> {
 
     private List<NameValuePair> getValidPostParameters() {
         final List<NameValuePair> inputPostParameters = getPostParameters();
-
         App.assertCondition(inputPostParameters != null);
+        if (inputPostParameters == null) {
+            return new ArrayList<NameValuePair>(0);
+        }
+
         final List<NameValuePair> validatedParameters
                 = new ArrayList<NameValuePair>(inputPostParameters);
 
@@ -79,9 +84,6 @@ abstract class ProductAsyncTaskBase<T1, T2, T3> extends AsyncTask<T1, T2, T3> {
         return validatedParameters;
     }
 
-    /**
-     * @return not null post parameters.
-     */
     protected abstract List<NameValuePair> getPostParameters();
 
     private HttpResponse send(final HttpPost request) throws IOException {

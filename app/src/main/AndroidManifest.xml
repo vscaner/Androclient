@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="veganscanner.androclient">
+    package="vscanner.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
-        android:name="veganscanner.androclient.App"
+        android:name="vscanner.android.App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.ProductDescriptionActivity"
+            android:name="vscanner.android.ui.ProductDescriptionActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -21,8 +21,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.ProductAdditionActivity"
+            android:name="vscanner.android.ui.ProductAdditionActivity"
             android:label="@string/app_name" />
+        <meta-data
+            android:name="com.crashlytics.ApiKey"
+            android:value="de80313f5f43d719218414e4cc41762af7e4e352"/>
     </application>
 
 </manifest>

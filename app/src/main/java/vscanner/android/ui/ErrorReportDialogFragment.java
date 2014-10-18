@@ -1,4 +1,4 @@
-package veganscanner.androclient.ui;
+package vscanner.android.ui;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -9,7 +9,7 @@ import android.text.InputType;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import veganscanner.androclient.R;
+import vscanner.android.R;
 
 public class ErrorReportDialogFragment extends DialogFragment {
     private Listener listener;
