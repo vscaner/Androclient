@@ -1,12 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <string name="app_name">VeganScaner</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_new_item">new_item</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_new_item1">new_item1</string>
-
+    <!--Context dependent strings names start with the context.-->
+    <!--Context independent strings start with 'raw'.-->
+    <!--This naming convention is supposed show which string might be used by different context
+    without a fear that someone would change its (string's) content somewhen.-->
+    <string name="app_name">VScanner</string>
+    <string name="barcode_app_install_request_title">Распознание штрих-кодов</string>
+    <string name="barcode_app_install_request_message">Для корректной работы нашего
+        приложения необходим компонент распознования штрих-кода, он абсолютно бесплатный</string>
+    <string name="barcode_app_install_request_reply_yes">Установить</string>
+    <string name="barcode_app_install_request_reply_no">Отмена</string>
+    <string name="internet_unavailable_dialog_title">Ой, нет соединения с сервером</string>
+    <string name="internet_unavailable_dialog_text">Соединение с интернетом отсутсвет или
+        нестабильно. Данные всё ещё находятся в памяти, попробывать отправить еще разок?</string>
+    <string name="internet_unavailable_positive_button_text">Еще разок</string>
+    <string name="internet_unavailable_negative_button_text">Нет, спасибо</string>
+    <string name="product_not_found_dialog_title">Ой, нет упоминания в базе</string>
+    <string name="product_not_found_dialog_text">Вы можете помочь проекту добавив данный товар
+        в базу, это не займет много времени</string>
+    <string name="product_not_found_positive_button_text">Да, согласен</string>
+    <string name="product_not_found_negative_button_text">Нет, спасибо</string>
+    <string name="error_report_dialog_title">Сообщение об ошибке в базе</string>
+    <string name="error_report_dialog_info_toast">Пожалуйста поясните, почему Вы считаете
+        информацию о товаре не соответсвуещей действительности</string>
+    <string name="product_description_activity_barcode_title">Штрихкод:</string>
+    <string name="product_description_activity_product_name_title">Наименование:</string>
+    <string name="product_description_activity_company_title">Производитель:</string>
+    <string name="product_description_activity_vegan_title">Веганский:</string>
+    <string name="product_description_activity_vegetarian_title">Вегетарианский:</string>
+    <string name="product_description_activity_tested_on_animals_title">Тесты на животных:</string>
+    <string name="product_description_activity_button_report_error">\"!\"</string>
+    <string name="product_description_activity_button_scan">Сканировать</string>
+    <string name="product_description_activity_button_show_more_info">\"\?\"</string>
+    <string name="product_description_activity_product_downloading_error_message">Ой, ошибка
+        загрузки данных из сервера</string>
+    <string name="product_description_activity_before_scan_start_message">Поднесите камеру к штрих-коду</string>
+    <string name="product_addition_activity_product_name_title">Наименование</string>
+    <string name="product_addition_activity_company_title">Производитель</string>
+    <string name="product_addition_activity_not_vegetarian_title">Содержит части животных</string>
+    <string name="product_addition_activity_not_vegan_title">Содержит молоко или яйца</string>
+    <string name="product_addition_activity_was_tested_on_animals_title">Тестировался на животных</string>
+    <string name="product_addition_activity_product_name_length_error_message">
+        Имя продукта должно быть длинее %d символов</string>
+    <string name="product_addition_activity_company_name_length_error_message">
+        Имя производителя должно быть длинее %d символов</string>
+    <string name="product_addition_activity_data_sending_fail_message">
+        Ой, не удалось отправить данные</string>
+    <string name="product_addition_activity_product_comment_title">Комментарий:</string>
+    <string name="raw_scan_a_barcode_first">
+        Сперва отсканируйте штих-код</string>
+    <string name="raw_connecting_to_database">Соединение с базой</string>
+    <string name="raw_barcode_received">Получен штрих-код</string>
+    <string name="raw_barcode_not_received">Не получен штрих-код</string>
+    <string name="raw_internet_connection_is_not_available">Отсутствует соединение с интернетом</string>
+    <string name="raw_YES">ДА</string>
+    <string name="raw_NO">НЕТ</string>
+    <string name="raw_send">Отправить</string>
+    <string name="raw_add">Добавить</string>
+    <string name="raw_oops_an_unknown_error_occurred">Ой, возникла неизвестная ошибка</string>
 </resources>
