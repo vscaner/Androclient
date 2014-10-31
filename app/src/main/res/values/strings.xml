@@ -58,4 +58,6 @@
     <string name="raw_send">Отправить</string>
     <string name="raw_add">Добавить</string>
     <string name="raw_oops_an_unknown_error_occurred">Ой, возникла неизвестная ошибка</string>
+    <string name="raw_new_scan">Сканировать снова</string>
+    <string name="raw_touch_to_scan">Коснитесь для сканирования!</string>
 </resources>

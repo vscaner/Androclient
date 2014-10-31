@@ -14,7 +14,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/button_scan"
-        android:layout_alignParentTop="true">
+        android:layout_alignParentTop="true"
+        android:fillViewport="false">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,7 +131,8 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:onClick="onButtonClick"
-        android:text="@string/product_description_activity_button_scan" />
+        android:background="@drawable/button"
+        android:text="@string/product_description_activity_button_scan"/>
 
     <Button
         android:id="@+id/button_show_comment"
