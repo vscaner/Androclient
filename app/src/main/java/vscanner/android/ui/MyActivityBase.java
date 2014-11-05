@@ -16,6 +16,7 @@ public abstract class MyActivityBase extends ActionBarActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide();
         toast = Toast.makeText(this, "", Toast.LENGTH_LONG);
     }
 
@@ -25,27 +26,27 @@ public abstract class MyActivityBase extends ActionBarActivity {
         toast = null;
     }
 
-    protected final void showToastWith(final int stringId) {
+    public final void showToastWith(final int stringId) {
         if (toast != null) {
             toast.setText(stringId);
             toast.show();
         }
     }
 
-    protected final void showToastWith(final String string) {
+    public final void showToastWith(final String string) {
         if (toast != null) {
             toast.setText(string);
             toast.show();
         }
     }
 
-    protected final void showProgressDialog(final int stringId) {
+    public final void showProgressDialog(final int stringId) {
         final DialogFragment progressDialog =
                 ProgressDialogFragment.create(getString(stringId));
         progressDialog.show(getSupportFragmentManager(), PROGRESS_DIALOG_TAG);
     }
 
-    protected final void hideProgressDialog() {
+    public final void hideProgressDialog() {
         App.assertCondition(getSupportFragmentManager() != null);
 
         final Fragment progressDialog =

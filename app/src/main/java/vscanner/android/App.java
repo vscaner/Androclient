@@ -33,8 +33,23 @@ public class App extends Application {
         Log.wtf(getName(), requester.getClass().toString() + ": " + message);
     }
 
+    /**
+     * MUST DO NOTHING IN RELEASE VERSION
+     */
     public static void assertCondition(final boolean condition) {
-        assert(condition);
+        if (condition == false) {
+            throw new AssertionError();
+        }
+    }
+
+    /**
+     * MUST DO NOTHING IN RELEASE VERSION
+     */
+    public static void assertCondition(final boolean condition, final String message) {
+        if (condition == false) {
+            logError(App.class, message);
+            throw new AssertionError();
+        }
     }
 
     public static boolean isOnline() {

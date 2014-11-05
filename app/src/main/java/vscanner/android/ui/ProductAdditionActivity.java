@@ -63,8 +63,6 @@ public class ProductAdditionActivity extends MyActivityBase {
                 !((CheckBox) findViewById(R.id.checkbox_not_vegan)).isChecked();
         final boolean wasTestedOnAnimals =
                 ((CheckBox) findViewById(R.id.checkbox_was_tested_on_animals)).isChecked();
-        final String comment =
-                ((TextView) findViewById(R.id.edittext_comment)).getText().toString();
 
         return new Product(
                 barcode,
@@ -72,8 +70,7 @@ public class ProductAdditionActivity extends MyActivityBase {
                 companyName,
                 isVegan,
                 isVegetarian,
-                wasTestedOnAnimals,
-                comment);
+                wasTestedOnAnimals);
     }
 
     /**

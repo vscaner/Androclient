@@ -51,7 +51,7 @@ public final class ProductAdditionAsyncTask extends ProductAsyncTaskBase<Void, V
                 new BasicNameValuePair(
                     "animals",
                     String.valueOf(product.wasTestedOnAnimals())));
-        postParameters.add(new BasicNameValuePair("comment", product.getComment()));
+        postParameters.add(new BasicNameValuePair("comment", "")); // TODO: empty comment? Maybe not pass it at all?
 
         return postParameters;
     }

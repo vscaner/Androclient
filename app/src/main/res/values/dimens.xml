@@ -1,6 +1,4 @@
 <resources>
-    <dimen name="activity_horizontal_margin">16dp</dimen>
-    <dimen name="activity_vertical_margin">16dp</dimen>
-    <dimen name="product_property_name_padding">5dp</dimen>
-    <dimen name="product_property_top_margin">25dp</dimen>
+    <dimen name="activity_content_horizontal_margin">10dp</dimen>
+    <dimen name="buttons_layout_bottom_margin">40dp</dimen>
 </resources>

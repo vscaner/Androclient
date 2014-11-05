@@ -1,13 +1,14 @@
 package vscanner.android;
 
-public final class Product {
+import java.io.Serializable;
+
+public final class Product implements Serializable {
     private final String barcode;
     private final String name;
     private final String company;
     private final boolean isVegan;
     private final boolean isVegetarian;
     private final boolean wasTestedOnAnimals;
-    private final String comment;
     private final boolean isFullyInitialized;
 
     /**
@@ -24,7 +25,6 @@ public final class Product {
         this.isVegan = false;
         this.isVegetarian = false;
         this.wasTestedOnAnimals = true;
-        this.comment = "";
         this.isFullyInitialized = false;
     }
 
@@ -38,21 +38,18 @@ public final class Product {
             final String company,
             final boolean isVegan,
             final boolean isVegetarian,
-            final boolean wasTestedOnAnimals,
-            final String comment) throws IllegalArgumentException  {
+            final boolean wasTestedOnAnimals) throws IllegalArgumentException  {
         if (!BarcodeToolkit.isValid(barcode)) {
             throw new IllegalArgumentException("barcode is not valid");
         }
         App.assertCondition(name != null);
         App.assertCondition(company != null);
-        App.assertCondition(comment != null);
         this.barcode = barcode;
         this.name = name;
         this.company = company;
         this.isVegan = isVegan;
         this.isVegetarian = isVegetarian;
         this.wasTestedOnAnimals = wasTestedOnAnimals;
-        this.comment = comment;
         this.isFullyInitialized = true;
     }
 
@@ -78,10 +75,6 @@ public final class Product {
 
     public boolean wasTestedOnAnimals() {
         return wasTestedOnAnimals;
-    }
-
-    public String getComment() {
-        return comment;
     }
 
     /**

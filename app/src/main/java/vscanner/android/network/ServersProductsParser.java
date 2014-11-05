@@ -19,7 +19,10 @@ class ServersProductsParser {
         final String validEncodedProduct = validate(encodedProduct);
 
         final String[] arguments = validEncodedProduct.split(SEPARATOR_STRING);
-        App.assertCondition(arguments.length == VALID_SEPARATORS_COUNT);
+        App.assertCondition(
+                arguments.length == VALID_SEPARATORS_COUNT + 1,
+                "arguments.length=(" + arguments.length + "), "
+                + "VALID_SEPARATORS_COUNT=(" + VALID_SEPARATORS_COUNT + ")" );
 
         return parse(arguments, barcode);
     }
@@ -55,7 +58,6 @@ class ServersProductsParser {
         final boolean isVegetarian = arguments[2].equals("0");
         final boolean wasTestedOnAnimals = arguments[3].equals("0");
         final String company = arguments[5];
-        final String comment = arguments[6];
 
         return new Product(
                 barcode,
@@ -63,7 +65,6 @@ class ServersProductsParser {
                 company,
                 isVegan,
                 isVegetarian,
-                wasTestedOnAnimals,
-                comment);
+                wasTestedOnAnimals);
     }
 }

@@ -1,3 +1,6 @@
+#crashlytics
+app/src/main/assets/crashlytics-build.properties
+
 #built application files
 *.apk
 *.ap_
