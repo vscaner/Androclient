@@ -56,7 +56,7 @@ class ServersProductsParser {
         final String name = arguments[0];
         final boolean isVegan = arguments[1].equals("0");
         final boolean isVegetarian = arguments[2].equals("0");
-        final boolean wasTestedOnAnimals = arguments[3].equals("0");
+        final boolean wasTestedOnAnimals = arguments[3].equals("1");
         final String company = arguments[5];
 
         return new Product(

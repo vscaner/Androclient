@@ -10,8 +10,7 @@ import android.view.ViewGroup;
 import vscanner.android.App;
 import vscanner.android.R;
 
-public abstract class CardboardActivityBase extends MyActivityBase implements CardboardUI {
-    @Override
+public abstract class CardboardActivityBase extends MyActivityBase {
     public final void cleanTopSlot() {
         final CardboardSlotData slotData =
                 new CardboardSlotData(
@@ -20,7 +19,6 @@ public abstract class CardboardActivityBase extends MyActivityBase implements Ca
         clean(slotData);
     }
 
-    @Override
     public final void cleanMiddleSlot() {
         final CardboardSlotData slotData =
                 new CardboardSlotData(
@@ -29,7 +27,6 @@ public abstract class CardboardActivityBase extends MyActivityBase implements Ca
         clean(slotData);
     }
 
-    @Override
     public final void putToTopSlot(final View view) {
         if (view != null) {
             putView(view, CardboardSlotData.Position.TOP);
@@ -38,7 +35,6 @@ public abstract class CardboardActivityBase extends MyActivityBase implements Ca
         }
     }
 
-    @Override
     public final void putToMiddleSlot(final View view) {
         if (view != null) {
             putView(view, CardboardSlotData.Position.MIDDLE);
@@ -67,7 +63,6 @@ public abstract class CardboardActivityBase extends MyActivityBase implements Ca
         slot.getContainer().removeAllViews();
     }
 
-    @Override
     public final void putToTopSlot(final Fragment fragment) {
         if (fragment != null) {
             putFragment(fragment, CardboardSlotData.Position.TOP);
@@ -76,7 +71,6 @@ public abstract class CardboardActivityBase extends MyActivityBase implements Ca
         }
     }
 
-    @Override
     public final void putToMiddleSlot(final Fragment fragment) {
         if (fragment != null) {
             putFragment(fragment, CardboardSlotData.Position.MIDDLE);
@@ -107,10 +101,5 @@ public abstract class CardboardActivityBase extends MyActivityBase implements Ca
     public final void setContentView(final int layoutId) {
         App.logError(this, "no child is allowed to use its own layout");
         App.assertCondition(false);
-    }
-
-    @Override
-    public final View getRoot() {
-        return findViewById(android.R.id.content);
     }
 }

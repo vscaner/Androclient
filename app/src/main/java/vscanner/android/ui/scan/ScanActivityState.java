@@ -1,13 +1,11 @@
 package vscanner.android.ui.scan;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 
 import vscanner.android.App;
-import vscanner.android.ui.CardboardUI;
-import vscanner.android.ui.MyActivityBase;
+import vscanner.android.ui.CardboardActivityBase;
 
 /**
  * The hierarchy is so complicated (i.e. many protected methods and no access to ScanActivity <br>
@@ -22,18 +20,14 @@ abstract class ScanActivityState {
 
     private final ScanActivity scanActivity;
 
-    /**
-     * @return not null
-     */
-    protected final CardboardUI getCardboardUI() {
-        return scanActivity;
-    }
-
     protected final Resources getResources() {
         return scanActivity.getResources();
     }
 
-    protected final MyActivityBase getActivity() {
+    /**
+     * @return not null
+     */
+    protected final CardboardActivityBase getActivity() {
         return scanActivity;
     }
 
@@ -72,7 +66,7 @@ abstract class ScanActivityState {
     public abstract void onActivityResult(final int requestCode, final int resultCode, final Intent intent);
 
     public final void onSaveInstanceState(final Bundle outState) {
-        outState.putString(FirstScanActivityState.STATE_NAME_EXTRA, this.getClass().toString());
+        outState.putString(FirstState.STATE_NAME_EXTRA, this.getClass().toString());
         onSaveStateData(outState);
     }
 

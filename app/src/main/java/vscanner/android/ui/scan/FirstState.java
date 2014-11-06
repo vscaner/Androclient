@@ -4,12 +4,11 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import vscanner.android.App;
-import vscanner.android.ui.CardboardUI;
 
-final class FirstScanActivityState extends ScanActivityState {
-    public static final String STATE_NAME_EXTRA = "FirstScanActivityState.STATE_NAME_EXTRA";
+final class FirstState extends ScanActivityState {
+    public static final String STATE_NAME_EXTRA = "FirstState.STATE_NAME_EXTRA";
 
-    protected FirstScanActivityState(final ScanActivity scanActivity) {
+    protected FirstState(final ScanActivity scanActivity) {
         super(scanActivity);
     }
 
@@ -17,21 +16,21 @@ final class FirstScanActivityState extends ScanActivityState {
     public void onCreate(final Bundle savedInstanceState) {
         final ScanActivityState nextState;
         if (savedInstanceState == null) {
-            nextState = new BeforeStartScanActivityState(this);
+            nextState = new BeforeScanState(this);
         } else {
             final String nextStateClassName = savedInstanceState.getString(STATE_NAME_EXTRA);
             if (nextStateClassName == null) {
                 App.assertCondition(false);
-                nextState = new BeforeStartScanActivityState(this);
-            } else if (nextStateClassName.equals(BeforeStartScanActivityState.class.toString())) {
-                nextState = new BeforeStartScanActivityState(this);
-            } else if (nextStateClassName.equals(ProductDescriptionScanActivityState.class.toString())) {
-                nextState = new ProductDescriptionScanActivityState(
+                nextState = new BeforeScanState(this);
+            } else if (nextStateClassName.equals(BeforeScanState.class.toString())) {
+                nextState = new BeforeScanState(this);
+            } else if (nextStateClassName.equals(ProductDescriptionState.class.toString())) {
+                nextState = new ProductDescriptionState(
                         this,
-                        ProductDescriptionScanActivityState.parseProductFrom(savedInstanceState));
+                        ProductDescriptionState.parseProductFrom(savedInstanceState));
             } else {
                 App.assertCondition(false);
-                nextState = new BeforeStartScanActivityState(this);
+                nextState = new BeforeScanState(this);
             }
         }
         requestStateChangeTo(nextState);

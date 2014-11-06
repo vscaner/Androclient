@@ -1,27 +1,15 @@
 package vscanner.android.ui.scan;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.RelativeLayout;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
-import vscanner.android.App;
-import vscanner.android.BarcodeToolkit;
-import vscanner.android.Product;
-import vscanner.android.R;
-import vscanner.android.network.ProductLoaderResultHolder;
-import vscanner.android.network.ProductLoadingAsyncTask;
 import vscanner.android.ui.CardboardActivityBase;
 
 // TODO: handle back button?
 public class ScanActivity extends CardboardActivityBase implements ScanActivityState.Listener {
-    private ScanActivityState state = new FirstScanActivityState(this);
+    private ScanActivityState state = new FirstState(this);
 
     public ScanActivityState getState() {
         return state;

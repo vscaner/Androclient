@@ -9,9 +9,9 @@ import android.widget.TextView;
 import vscanner.android.App;
 import vscanner.android.Product;
 import vscanner.android.R;
-import vscanner.android.ui.CardboardUI;
+import vscanner.android.ui.CardboardActivityBase;
 
-public class ProductDescriptionScanActivityState extends ScanActivityState {
+public class ProductDescriptionState extends ScanActivityState {
     private static final String EXTRA_PRODUCT = "ProductDescriptionScanActivityState.EXTRA_PRODUCT";
     private final Product product;
 
@@ -19,7 +19,7 @@ public class ProductDescriptionScanActivityState extends ScanActivityState {
      * @param product must be a valid product (product != null && product.isFullyInitialized())
      * @throws java.lang.IllegalArgumentException if product is invalid
      */
-    protected ProductDescriptionScanActivityState(final ScanActivityState parent, final Product product) {
+    protected ProductDescriptionState(final ScanActivityState parent, final Product product) {
         super(parent);
         if (product == null || !product.isFullyInitialized()) {
             throw new IllegalArgumentException("product must not be valid");
@@ -41,9 +41,9 @@ public class ProductDescriptionScanActivityState extends ScanActivityState {
     private void initializeViewBy(final Product product) {
         App.assertCondition(product != null);
 
-        final CardboardUI cardboardUI = getCardboardUI();
-        cardboardUI.putToMiddleSlot(ProductDescriptionFragment.create(product));
-        cardboardUI.putToTopSlot(createCowSaysFragmentFor(product));
+        final CardboardActivityBase activity = getActivity();
+        activity.putToMiddleSlot(ProductDescriptionFragment.create(product));
+        activity.putToTopSlot(createCowSaysFragmentFor(product));
     }
 
     private CowSaysFragment createCowSaysFragmentFor(final Product product) {

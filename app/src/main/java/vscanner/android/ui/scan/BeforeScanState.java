@@ -16,9 +16,9 @@ import vscanner.android.Product;
 import vscanner.android.R;
 import vscanner.android.network.ProductLoaderResultHolder;
 import vscanner.android.network.ProductLoadingAsyncTask;
-import vscanner.android.ui.CardboardUI;
+import vscanner.android.ui.CardboardActivityBase;
 
-public class BeforeStartScanActivityState extends ScanActivityState {
+public class BeforeScanState extends ScanActivityState {
     private final ProductLoadingAsyncTask.Listener productLoaderListener =
             new ProductLoadingAsyncTask.Listener() {
                 @Override
@@ -40,20 +40,20 @@ public class BeforeStartScanActivityState extends ScanActivityState {
                         App.logError(this, "a task failed at downloading a product");
                     } else { // all ok
                         requestStateChangeTo(
-                                new ProductDescriptionScanActivityState(
-                                    BeforeStartScanActivityState.this, resultProduct));
+                                new ProductDescriptionState(
+                                    BeforeScanState.this, resultProduct));
                     }
                 }
             };
 
-    protected BeforeStartScanActivityState(final ScanActivityState parent) {
+    protected BeforeScanState(final ScanActivityState parent) {
         super(parent);
     }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        final CardboardUI cardboardUI = getCardboardUI();
-        final View root = cardboardUI.getRoot();
+        final CardboardActivityBase activity = getActivity();
+        final View root = activity.findViewById(android.R.id.content);
 
         if (root != null) {
             root.findViewById(R.id.button_new_scan).setVisibility(View.GONE);
@@ -63,9 +63,9 @@ public class BeforeStartScanActivityState extends ScanActivityState {
             cowSaysFragment.setCowMood(CowState.Mood.NEUTRAL);
             cowSaysFragment.setCowsText(getResources().getString(R.string.raw_touch_to_scan));
 
-            cardboardUI.putToTopSlot(cowSaysFragment);
+            activity.putToTopSlot(cowSaysFragment);
 
-            cardboardUI.putToMiddleSlot(createPackageButton());
+            activity.putToMiddleSlot(createPackageButton());
         } else {
             App.logError(this, "can't set up view without a root");
             App.assertCondition(false);
