@@ -35,18 +35,18 @@ public class ProductAdditionActivity extends MyActivityBase {
             return;
         }
 
-        showProgressDialog(R.string.raw_connecting_to_database);
+//        showProgressDialog(R.string.raw_connecting_to_database);
 
         final ProductAdditionAsyncTask task =
                 new ProductAdditionAsyncTask(product, new ProductAdditionAsyncTask.Listener() {
                     @Override
                     public void onResult(final boolean success) {
-                        hideProgressDialog();
-                        if (success) {
-                            finish();
-                        } else {
-                            showToastWith(R.string.product_addition_activity_data_sending_fail_message);
-                        }
+//                        hideProgressDialog();
+//                        if (success) {
+//                            finish();
+//                        } else {
+//                            showToastWith(R.string.product_addition_activity_data_sending_fail_message);
+//                        }
                     }
                 });
         task.execute();

@@ -21,6 +21,20 @@ public abstract class MyActivityBase extends ActionBarActivity {
     }
 
     @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        App.onActivityResumeFragments(this);
+        App.assertCondition(this == App.getCurrentActivity());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        App.onActivityPause(this);
+        App.assertCondition(this != App.getCurrentActivity());
+    }
+
+    @Override
     protected void onDestroy() {
         super.onPause();
         toast = null;
@@ -37,25 +51,6 @@ public abstract class MyActivityBase extends ActionBarActivity {
         if (toast != null) {
             toast.setText(string);
             toast.show();
-        }
-    }
-
-    public final void showProgressDialog(final int stringId) {
-        final DialogFragment progressDialog =
-                ProgressDialogFragment.create(getString(stringId));
-        progressDialog.show(getSupportFragmentManager(), PROGRESS_DIALOG_TAG);
-    }
-
-    public final void hideProgressDialog() {
-        App.assertCondition(getSupportFragmentManager() != null);
-
-        final Fragment progressDialog =
-                getSupportFragmentManager().findFragmentByTag(PROGRESS_DIALOG_TAG);
-        if (progressDialog != null) {
-            final FragmentTransaction transaction =
-                    getSupportFragmentManager().beginTransaction();
-            transaction.remove(progressDialog);
-            transaction.commit();
         }
     }
 }

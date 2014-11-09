@@ -66,9 +66,11 @@ abstract class ScanActivityState {
     public abstract void onActivityResult(final int requestCode, final int resultCode, final Intent intent);
 
     public final void onSaveInstanceState(final Bundle outState) {
-        outState.putString(FirstState.STATE_NAME_EXTRA, this.getClass().toString());
+        outState.putString(ActivityFirstState.STATE_NAME_EXTRA, this.getClass().toString());
         onSaveStateData(outState);
     }
 
     public abstract void onSaveStateData(final Bundle outState);
+
+    public abstract void onResumeFragments();
 }

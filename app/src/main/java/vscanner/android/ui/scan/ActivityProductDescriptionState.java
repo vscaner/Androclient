@@ -11,7 +11,7 @@ import vscanner.android.Product;
 import vscanner.android.R;
 import vscanner.android.ui.CardboardActivityBase;
 
-public class ProductDescriptionState extends ScanActivityState {
+class ActivityProductDescriptionState extends ScanActivityState {
     private static final String EXTRA_PRODUCT = "ProductDescriptionScanActivityState.EXTRA_PRODUCT";
     private final Product product;
 
@@ -19,7 +19,7 @@ public class ProductDescriptionState extends ScanActivityState {
      * @param product must be a valid product (product != null && product.isFullyInitialized())
      * @throws java.lang.IllegalArgumentException if product is invalid
      */
-    protected ProductDescriptionState(final ScanActivityState parent, final Product product) {
+    protected ActivityProductDescriptionState(final ScanActivityState parent, final Product product) {
         super(parent);
         if (product == null || !product.isFullyInitialized()) {
             throw new IllegalArgumentException("product must not be valid");
@@ -73,12 +73,17 @@ public class ProductDescriptionState extends ScanActivityState {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        // TODO: this
+        // TODO: new-scan button may start new scan from here, so handle it
     }
 
     @Override
     public void onSaveStateData(final Bundle outState) {
         outState.putSerializable(EXTRA_PRODUCT, product);
+    }
+
+    @Override
+    public void onResumeFragments() {
+        // nothing to do
     }
 
     public static Product parseProductFrom(final Bundle bundle) {

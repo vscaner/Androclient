@@ -1,5 +1,7 @@
 package vscanner.android.network;
 
+import android.os.AsyncTask;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -11,13 +13,15 @@ import vscanner.android.App;
 import vscanner.android.BarcodeToolkit;
 
 public final class ErrorReportingAsyncTask
-        extends ProductAsyncTaskBase<Void, Void, Boolean> {
+        extends AsyncTask<Void, Void, Boolean> {
     public static final int MINIMUM_COMMENT_LENGTH = 3;
 
     private static final String REQUEST_URL = "http://lumeria.ru/vscaner/er.php";
     private final String barcode;
     private final String comment;
     private final Listener listener;
+
+    private final ServerQuerier serverQuerier;
 
     public static interface Listener {
         void onResult(final boolean success);
@@ -32,8 +36,6 @@ public final class ErrorReportingAsyncTask
             final String barcode,
             final String comment,
             final Listener listener) throws IllegalArgumentException {
-        super(REQUEST_URL);
-
         if (!BarcodeToolkit.isValid(barcode)) {
             throw new IllegalArgumentException("barcode is not valid");
         } else if (comment == null) {
@@ -44,10 +46,10 @@ public final class ErrorReportingAsyncTask
         this.barcode = barcode;
         this.comment = comment;
         this.listener = listener;
+        this.serverQuerier = new ServerQuerier(REQUEST_URL, createPostParameters());
     }
 
-    @Override
-    protected List<NameValuePair> getPostParameters() {
+    protected List<NameValuePair> createPostParameters() {
         App.assertCondition(barcode != null);
         final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
         postParameters.add(new BasicNameValuePair("bcod", barcode));
@@ -58,7 +60,7 @@ public final class ErrorReportingAsyncTask
     @Override
     protected Boolean doInBackground(final Void... voids) {
         try {
-            queryServer();
+            serverQuerier.queryServer();
         } catch (final IOException e) {
             App.logError(this, "error query failed for some reason: " + e.getMessage());
             return false;

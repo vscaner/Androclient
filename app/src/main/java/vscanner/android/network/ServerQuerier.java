@@ -1,6 +1,5 @@
 package vscanner.android.network;
 
-import android.os.AsyncTask;
 import android.webkit.URLUtil;
 
 import org.apache.http.HttpResponse;
@@ -21,19 +20,43 @@ import java.util.List;
 
 import vscanner.android.App;
 
-abstract class ProductAsyncTaskBase<T1, T2, T3> extends AsyncTask<T1, T2, T3> {
+// TODO: stupid name
+final class ServerQuerier {
     private static final String ENCODING = "UTF-8";
     private final String url;
+    private final List<NameValuePair> postParameters;
 
     /**
      * @param url must be a valid url, ie (URLUtil.isValidUrl(url) == true)
      * @throws IllegalArgumentException if any argument is not valid
      */
-    protected ProductAsyncTaskBase(final String url) throws IllegalArgumentException {
+    protected ServerQuerier(
+            final String url,
+            final List<NameValuePair> postParameters) throws IllegalArgumentException {
         if (!URLUtil.isValidUrl(url)) {
             throw new IllegalArgumentException("given url (" + url + ") is not valid");
         }
         this.url = url;
+        this.postParameters = validate(postParameters);
+    }
+
+    private List<NameValuePair> validate(final List<NameValuePair> postParameters) {
+        App.assertCondition(postParameters != null);
+        if (postParameters == null) {
+            return new ArrayList<NameValuePair>(0);
+        }
+
+        final List<NameValuePair> validatedParameters
+                = new ArrayList<NameValuePair>(postParameters);
+
+        final Iterator<NameValuePair> it = validatedParameters.iterator();
+        while (it.hasNext()) {
+            if (it.next() == null) {
+                it.remove();
+            }
+        }
+
+        return validatedParameters;
     }
 
     /**
@@ -49,7 +72,7 @@ abstract class ProductAsyncTaskBase<T1, T2, T3> extends AsyncTask<T1, T2, T3> {
     private HttpPost formPostRequest() throws IOException {
         final UrlEncodedFormEntity encodedFormEntity;
         try {
-            encodedFormEntity = new UrlEncodedFormEntity(getValidPostParameters(), ENCODING);
+            encodedFormEntity = new UrlEncodedFormEntity(postParameters, ENCODING);
         } catch (final UnsupportedEncodingException e) {
             throw new IOException("encoding wasn't parsed: " + e.getMessage());
         }
@@ -63,28 +86,6 @@ abstract class ProductAsyncTaskBase<T1, T2, T3> extends AsyncTask<T1, T2, T3> {
         request.setEntity(encodedFormEntity);
         return request;
     }
-
-    private List<NameValuePair> getValidPostParameters() {
-        final List<NameValuePair> inputPostParameters = getPostParameters();
-        App.assertCondition(inputPostParameters != null);
-        if (inputPostParameters == null) {
-            return new ArrayList<NameValuePair>(0);
-        }
-
-        final List<NameValuePair> validatedParameters
-                = new ArrayList<NameValuePair>(inputPostParameters);
-
-        final Iterator<NameValuePair> it = validatedParameters.iterator();
-        while (it.hasNext()) {
-            if (it.next() == null) {
-                it.remove();
-            }
-        }
-
-        return validatedParameters;
-    }
-
-    protected abstract List<NameValuePair> getPostParameters();
 
     private HttpResponse send(final HttpPost request) throws IOException {
         final HttpClient httpClient = new DefaultHttpClient();

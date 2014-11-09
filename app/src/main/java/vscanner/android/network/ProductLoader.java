@@ -1,5 +1,8 @@
 package vscanner.android.network;
 
+import android.content.Context;
+import android.support.v4.content.AsyncTaskLoader;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -12,50 +15,38 @@ import vscanner.android.App;
 import vscanner.android.BarcodeToolkit;
 import vscanner.android.Product;
 
-public class ProductLoadingAsyncTask
-        extends ProductAsyncTaskBase<Void, Void, ProductLoaderResultHolder> {
+public class ProductLoader extends AsyncTaskLoader<ProductLoaderResultHolder> {
     private static final String REQUEST_URL = "http://lumeria.ru/vscaner/index.php";
-    private final Listener listener;
     private final String barcode;
+    private final ServerQuerier serverQuerier;
 
-    @Override
-    protected List<NameValuePair> getPostParameters() {
+    /**
+     * @param barcode must be valid, ie (BarcodeToolkit.isValid(barcode) == true)
+     * @throws IllegalArgumentException if any argument is not valid
+     */
+    public ProductLoader(
+            final String barcode,
+            final Context context) throws IllegalArgumentException {
+        super(context);
+        if (!BarcodeToolkit.isValid(barcode)) {
+            throw new IllegalArgumentException("barcode must be valid");
+        }
+        this.barcode = barcode;
+        this.serverQuerier = new ServerQuerier(REQUEST_URL, createPostParameters());
+    }
+
+    protected List<NameValuePair> createPostParameters() {
         final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
         postParameters.add(new BasicNameValuePair("bcod", barcode));
         return postParameters;
     }
 
-    public static interface Listener {
-        void onResult(final ProductLoaderResultHolder resultHolder);
-    }
-
-    /**
-     * @param barcode must not be valid, ie (BarcodeToolkit.isValid(barcode) == true)
-     * @throws IllegalArgumentException if any argument is not valid
-     */
-    public ProductLoadingAsyncTask(
-            final String barcode,
-            final Listener listener) throws IllegalArgumentException {
-        super(REQUEST_URL);
-        this.listener = listener;
-        if (!BarcodeToolkit.isValid(barcode)) {
-            throw new IllegalArgumentException("barcode must be valid");
-        }
-        this.barcode = barcode;
-    }
 
     @Override
-    protected void onPostExecute(final ProductLoaderResultHolder resultHolder) {
-        if (listener != null) {
-            listener.onResult(resultHolder);
-        }
-    }
-
-    @Override
-    protected ProductLoaderResultHolder doInBackground(final Void... voids) {
+    public ProductLoaderResultHolder loadInBackground() {
         final String serverResponse;
         try {
-            serverResponse = queryServer();
+            serverResponse = serverQuerier.queryServer();
         } catch (final IOException e) {
             App.logError(this, e.getMessage());
             return ProductLoaderResultHolder.createWithNetworkError(barcode);

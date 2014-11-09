@@ -9,7 +9,7 @@ import vscanner.android.ui.CardboardActivityBase;
 
 // TODO: handle back button?
 public class ScanActivity extends CardboardActivityBase implements ScanActivityState.Listener {
-    private ScanActivityState state = new FirstState(this);
+    private ScanActivityState state = new ActivityFirstState(this);
 
     public ScanActivityState getState() {
         return state;
@@ -33,8 +33,15 @@ public class ScanActivity extends CardboardActivityBase implements ScanActivityS
         state.onSaveInstanceState(outState);
     }
 
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
+    @Override
+    protected void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         state.onActivityResult(requestCode, resultCode, intent);
+    }
+
+    @Override
+    protected void onResumeFragments() {
+        super.onResumeFragments();
+        state.onResumeFragments();
     }
 }

@@ -6,8 +6,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
+
+import java.util.Arrays;
+
+import vscanner.android.ui.MyActivityBase;
+
 public class App extends Application {
     private static Context context;
+    private static MyActivityBase currentActivity;
 
     public static Context getContext() {
         return context;
@@ -34,20 +41,26 @@ public class App extends Application {
     }
 
     /**
-     * MUST DO NOTHING IN RELEASE VERSION
+     * MUST NOT THROW IN RELEASE VERSION
      */
     public static void assertCondition(final boolean condition) {
         if (condition == false) {
+//            Crashlytics.log(
+//                    "ASSERTATION FAILED!\n"
+//                            + Arrays.toString(Thread.currentThread().getStackTrace()));
             throw new AssertionError();
         }
     }
 
     /**
-     * MUST DO NOTHING IN RELEASE VERSION
+     * MUST NOT THROW IN RELEASE VERSION
      */
     public static void assertCondition(final boolean condition, final String message) {
         if (condition == false) {
             logError(App.class, message);
+//            Crashlytics.log(
+//                    "ASSERTATION FAILED!\n"
+//                            + Arrays.toString(Thread.currentThread().getStackTrace()));
             throw new AssertionError();
         }
     }
@@ -71,5 +84,19 @@ public class App extends Application {
                 R.string.barcode_app_install_request_reply_yes;
         com.google.zxing.integration.android.IntentIntegrator.noStringId =
                 R.string.barcode_app_install_request_reply_no;
+    }
+
+    public static void onActivityPause(final MyActivityBase activity) {
+        if (currentActivity == activity) {
+            currentActivity = null;
+        }
+    }
+
+    public static void onActivityResumeFragments(final MyActivityBase activity) {
+        currentActivity = activity;
+    }
+
+    public static MyActivityBase getCurrentActivity() {
+        return currentActivity;
     }
 }

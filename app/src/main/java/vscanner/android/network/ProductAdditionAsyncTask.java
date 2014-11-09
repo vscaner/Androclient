@@ -1,5 +1,7 @@
 package vscanner.android.network;
 
+import android.os.AsyncTask;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -10,10 +12,11 @@ import java.util.List;
 import vscanner.android.App;
 import vscanner.android.Product;
 
-public final class ProductAdditionAsyncTask extends ProductAsyncTaskBase<Void, Void, Boolean> {
+public final class ProductAdditionAsyncTask extends AsyncTask<Void, Void, Boolean> {
     private static final String URL = "http://lumeria.ru/vscaner/tobase.php";
     private final Product product;
     private final Listener listener;
+    private final ServerQuerier serverQuerier;
 
     public static interface Listener {
         void onResult(final boolean success);
@@ -26,18 +29,16 @@ public final class ProductAdditionAsyncTask extends ProductAsyncTaskBase<Void, V
     public ProductAdditionAsyncTask(
             final Product product,
             final Listener listener) throws IllegalArgumentException {
-        super(URL);
-
         if (product == null || !product.isFullyInitialized()) {
             throw new IllegalArgumentException("product argument is invalid");
         }
 
         this.product = product;
         this.listener = listener;
+        this.serverQuerier = new ServerQuerier(URL, createPostParameters());
     }
 
-    @Override
-    protected List<NameValuePair> getPostParameters() {
+    protected List<NameValuePair> createPostParameters() {
         final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
 
         postParameters.add(new BasicNameValuePair("bcod", product.getBarcode()));
@@ -69,10 +70,10 @@ public final class ProductAdditionAsyncTask extends ProductAsyncTaskBase<Void, V
     }
 
     @Override
-    protected Boolean doInBackground(Void... voids) {
+    protected Boolean doInBackground(final Void... voids) {
         try {
-            queryServer();
-        } catch (IOException e) {
+            serverQuerier.queryServer();
+        } catch (final IOException e) {
             App.logError(this, "product addition query failed for some reason: " + e.getMessage());
             return false;
         }

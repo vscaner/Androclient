@@ -15,43 +15,21 @@ import vscanner.android.BarcodeToolkit;
 import vscanner.android.Product;
 import vscanner.android.R;
 import vscanner.android.network.ProductLoaderResultHolder;
-import vscanner.android.network.ProductLoadingAsyncTask;
+import vscanner.android.network.ProductLoader;
 import vscanner.android.ui.CardboardActivityBase;
 
-public class BeforeScanState extends ScanActivityState {
-    private final ProductLoadingAsyncTask.Listener productLoaderListener =
-            new ProductLoadingAsyncTask.Listener() {
-                @Override
-                public void onResult(final ProductLoaderResultHolder resultHolder) {
-                    getActivity().hideProgressDialog();
-                    // TODO: protection from stopped activity
-                    final Product resultProduct = resultHolder.getProduct();
-
-                    // TODO: protection from invalid resultProduct (resultProduct.isFullyInitialized() || null )
-
-                    final ProductLoaderResultHolder.ResultType resultType =
-                            resultHolder.getResultType();
-
-                    // TODO: handle it
-                    if (resultType == ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT) {
-    //                            showProductNotFoundDialog(resultProduct.getBarcode());
-                    } else if (resultType != ProductLoaderResultHolder.ResultType.SUCCESS) {
-                        getActivity().showToastWith(R.string.product_description_activity_product_downloading_error_message);
-                        App.logError(this, "a task failed at downloading a product");
-                    } else { // all ok
-                        requestStateChangeTo(
-                                new ProductDescriptionState(
-                                    BeforeScanState.this, resultProduct));
-                    }
-                }
-            };
-
-    protected BeforeScanState(final ScanActivityState parent) {
+class ActivityBeforeScanState extends ScanActivityState {
+    protected ActivityBeforeScanState(final ScanActivityState parent) {
         super(parent);
     }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
+        // onResumeFragments() will take care of things
+    }
+
+    @Override
+    public void onResumeFragments() {
         final CardboardActivityBase activity = getActivity();
         final View root = activity.findViewById(android.R.id.content);
 
@@ -67,8 +45,7 @@ public class BeforeScanState extends ScanActivityState {
 
             activity.putToMiddleSlot(createPackageButton());
         } else {
-            App.logError(this, "can't set up view without a root");
-            App.assertCondition(false);
+            App.assertCondition(false, "can't set up view without a root");
         }
     }
 
@@ -112,13 +89,8 @@ public class BeforeScanState extends ScanActivityState {
             final String scannedBarcode = scanningResult.getContents();
             if (BarcodeToolkit.isValid(scannedBarcode)) {
                 getActivity().showToastWith(R.string.raw_barcode_received);
-                getActivity().showProgressDialog(R.string.raw_connecting_to_database);
 
-                final ProductLoadingAsyncTask task =
-                        new ProductLoadingAsyncTask(
-                                scannedBarcode,
-                                productLoaderListener);
-                task.execute();
+                requestStateChangeTo(new ActivityLoadingState(this, scannedBarcode));
             } else {
                 getActivity().showToastWith(R.string.raw_barcode_not_received);
             }
