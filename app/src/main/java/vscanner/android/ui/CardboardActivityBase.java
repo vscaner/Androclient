@@ -102,4 +102,8 @@ public abstract class CardboardActivityBase extends MyActivityBase {
         App.logError(this, "no child is allowed to use its own layout");
         App.assertCondition(false);
     }
+
+    public final void setNewScanButtonVisibility(final int visibility) {
+        findViewById(R.id.button_new_scan).setVisibility(visibility);
+    }
 }

@@ -21,6 +21,9 @@ import vscanner.android.ui.CardboardActivityBase;
 class ActivityBeforeScanState extends ScanActivityState {
     protected ActivityBeforeScanState(final ScanActivityState parent) {
         super(parent);
+        if (App.getCurrentActivity() == getActivity()) {
+            initView();
+        }
     }
 
     @Override
@@ -28,25 +31,25 @@ class ActivityBeforeScanState extends ScanActivityState {
         // onResumeFragments() will take care of things
     }
 
+    // TODO: do we really need to do it? Because sometimes view may be initialized too many times
     @Override
     public void onResumeFragments() {
+        initView();
+    }
+
+    private void initView() {
         final CardboardActivityBase activity = getActivity();
-        final View root = activity.findViewById(android.R.id.content);
+        activity.setNewScanButtonVisibility(View.GONE);
+        activity.putToTopSlot(createCowSaysFragment());
+        activity.putToMiddleSlot(createPackageButton());
+    }
 
-        if (root != null) {
-            root.findViewById(R.id.button_new_scan).setVisibility(View.GONE);
-
-            final CowSaysFragment cowSaysFragment = new CowSaysFragment();
-            cowSaysFragment.setCowBackgroundVisibility(false);
-            cowSaysFragment.setCowMood(CowState.Mood.NEUTRAL);
-            cowSaysFragment.setCowsText(getResources().getString(R.string.raw_touch_to_scan));
-
-            activity.putToTopSlot(cowSaysFragment);
-
-            activity.putToMiddleSlot(createPackageButton());
-        } else {
-            App.assertCondition(false, "can't set up view without a root");
-        }
+    private CowSaysFragment createCowSaysFragment() {
+        final CowSaysFragment cowSaysFragment = new CowSaysFragment();
+        cowSaysFragment.setCowBackgroundVisibility(false);
+        cowSaysFragment.setCowMood(CowState.Mood.NEUTRAL);
+        cowSaysFragment.setCowsText(getResources().getString(R.string.raw_touch_to_scan));
+        return cowSaysFragment;
     }
 
     private ImageButton createPackageButton() {
