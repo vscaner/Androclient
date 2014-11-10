@@ -20,27 +20,33 @@ import java.util.List;
 
 import vscanner.android.App;
 
-// TODO: stupid name
-final class ServerQuerier {
+final class HTTP {
     private static final String ENCODING = "UTF-8";
-    private final String url;
-    private final List<NameValuePair> postParameters;
+
+    private HTTP() {
+    }
 
     /**
      * @param url must be a valid url, ie (URLUtil.isValidUrl(url) == true)
+     * @return server's reply
+     * @throws IOException if something went wrong during querying.
      * @throws IllegalArgumentException if any argument is not valid
      */
-    protected ServerQuerier(
+    public static String post(
             final String url,
-            final List<NameValuePair> postParameters) throws IllegalArgumentException {
+            final List<NameValuePair> postParameters) throws IllegalArgumentException, IOException {
         if (!URLUtil.isValidUrl(url)) {
             throw new IllegalArgumentException("given url (" + url + ") is not valid");
         }
-        this.url = url;
-        this.postParameters = validate(postParameters);
+        final List<NameValuePair> validPostParameters = validate(postParameters);
+
+        final org.apache.http.client.methods.HttpPost request =
+                formPostRequest(url, validPostParameters);
+        final HttpResponse response = send(request);
+        return decode(response);
     }
 
-    private List<NameValuePair> validate(final List<NameValuePair> postParameters) {
+    private static List<NameValuePair> validate(final List<NameValuePair> postParameters) {
         App.assertCondition(postParameters != null);
         if (postParameters == null) {
             return new ArrayList<NameValuePair>(0);
@@ -59,17 +65,9 @@ final class ServerQuerier {
         return validatedParameters;
     }
 
-    /**
-     * @return server's reply
-     * @throws IOException if something went wrong during querying.
-     */
-    protected final String queryServer() throws IOException {
-        final HttpPost request = formPostRequest();
-        final HttpResponse response = send(request);
-        return decode(response);
-    }
-
-    private HttpPost formPostRequest() throws IOException {
+    private static org.apache.http.client.methods.HttpPost formPostRequest(
+            final String url,
+            final List<NameValuePair> postParameters) throws IOException {
         final UrlEncodedFormEntity encodedFormEntity;
         try {
             encodedFormEntity = new UrlEncodedFormEntity(postParameters, ENCODING);
@@ -77,9 +75,9 @@ final class ServerQuerier {
             throw new IOException("encoding wasn't parsed: " + e.getMessage());
         }
 
-        final HttpPost request;
+        final org.apache.http.client.methods.HttpPost request;
         try {
-            request = new HttpPost(url);
+            request = new org.apache.http.client.methods.HttpPost(url);
         } catch (final IllegalArgumentException e) {
             throw new IOException("received URL (" + url + ") is invalid: " + e.getMessage());
         }
@@ -87,7 +85,7 @@ final class ServerQuerier {
         return request;
     }
 
-    private HttpResponse send(final HttpPost request) throws IOException {
+    private static HttpResponse send(final org.apache.http.client.methods.HttpPost request) throws IOException {
         final HttpClient httpClient = new DefaultHttpClient();
         final HttpResponse response;
         try {
@@ -104,7 +102,7 @@ final class ServerQuerier {
         return response;
     }
 
-    private String decode(final HttpResponse response) throws IOException {
+    private static String decode(final HttpResponse response) throws IOException {
         try {
             return EntityUtils.toString(response.getEntity(), ENCODING);
         } catch (IOException e) {

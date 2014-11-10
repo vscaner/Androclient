@@ -21,8 +21,6 @@ public final class ErrorReportingAsyncTask
     private final String comment;
     private final Listener listener;
 
-    private final ServerQuerier serverQuerier;
-
     public static interface Listener {
         void onResult(final boolean success);
     }
@@ -46,7 +44,17 @@ public final class ErrorReportingAsyncTask
         this.barcode = barcode;
         this.comment = comment;
         this.listener = listener;
-        this.serverQuerier = new ServerQuerier(REQUEST_URL, createPostParameters());
+    }
+
+    @Override
+    protected Boolean doInBackground(final Void... voids) {
+        try {
+            HTTP.post(REQUEST_URL, createPostParameters());
+        } catch (final IOException e) {
+            App.logError(this, "error query failed for some reason: " + e.getMessage());
+            return false;
+        }
+        return true;
     }
 
     protected List<NameValuePair> createPostParameters() {
@@ -55,17 +63,6 @@ public final class ErrorReportingAsyncTask
         postParameters.add(new BasicNameValuePair("bcod", barcode));
         postParameters.add(new BasicNameValuePair("comment", comment));
         return postParameters;
-    }
-
-    @Override
-    protected Boolean doInBackground(final Void... voids) {
-        try {
-            serverQuerier.queryServer();
-        } catch (final IOException e) {
-            App.logError(this, "error query failed for some reason: " + e.getMessage());
-            return false;
-        }
-        return true;
     }
 
     @Override

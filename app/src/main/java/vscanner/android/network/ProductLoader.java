@@ -18,7 +18,6 @@ import vscanner.android.Product;
 public class ProductLoader extends AsyncTaskLoader<ProductLoaderResultHolder> {
     private static final String REQUEST_URL = "http://lumeria.ru/vscaner/index.php";
     private final String barcode;
-    private final ServerQuerier serverQuerier;
 
     /**
      * @param barcode must be valid, ie (BarcodeToolkit.isValid(barcode) == true)
@@ -32,21 +31,13 @@ public class ProductLoader extends AsyncTaskLoader<ProductLoaderResultHolder> {
             throw new IllegalArgumentException("barcode must be valid");
         }
         this.barcode = barcode;
-        this.serverQuerier = new ServerQuerier(REQUEST_URL, createPostParameters());
     }
-
-    protected List<NameValuePair> createPostParameters() {
-        final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-        postParameters.add(new BasicNameValuePair("bcod", barcode));
-        return postParameters;
-    }
-
 
     @Override
     public ProductLoaderResultHolder loadInBackground() {
         final String serverResponse;
         try {
-            serverResponse = serverQuerier.queryServer();
+            serverResponse = HTTP.post(REQUEST_URL, createPostParameters());
         } catch (final IOException e) {
             App.logError(this, e.getMessage());
             return ProductLoaderResultHolder.createWithNetworkError(barcode);
@@ -65,5 +56,11 @@ public class ProductLoader extends AsyncTaskLoader<ProductLoaderResultHolder> {
         }
 
         return ProductLoaderResultHolder.createWithSuccess(product);
+    }
+
+    protected List<NameValuePair> createPostParameters() {
+        final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("bcod", barcode));
+        return postParameters;
     }
 }

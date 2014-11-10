@@ -16,7 +16,6 @@ public final class ProductAdditionAsyncTask extends AsyncTask<Void, Void, Boolea
     private static final String URL = "http://lumeria.ru/vscaner/tobase.php";
     private final Product product;
     private final Listener listener;
-    private final ServerQuerier serverQuerier;
 
     public static interface Listener {
         void onResult(final boolean success);
@@ -35,26 +34,6 @@ public final class ProductAdditionAsyncTask extends AsyncTask<Void, Void, Boolea
 
         this.product = product;
         this.listener = listener;
-        this.serverQuerier = new ServerQuerier(URL, createPostParameters());
-    }
-
-    protected List<NameValuePair> createPostParameters() {
-        final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-
-        postParameters.add(new BasicNameValuePair("bcod", product.getBarcode()));
-        postParameters.add(new BasicNameValuePair("name", product.getName()));
-        postParameters.add(new BasicNameValuePair("companyname", product.getCompany()));
-
-        addLogicalInversedParametersTo(postParameters);
-
-        postParameters.add(new BasicNameValuePair("gmo", "0"));
-        postParameters.add(
-                new BasicNameValuePair(
-                    "animals",
-                    String.valueOf(product.wasTestedOnAnimals())));
-        postParameters.add(new BasicNameValuePair("comment", "")); // TODO: empty comment? Maybe not pass it at all?
-
-        return postParameters;
     }
 
     private void addLogicalInversedParametersTo(final List<NameValuePair> postParameters) {
@@ -72,12 +51,31 @@ public final class ProductAdditionAsyncTask extends AsyncTask<Void, Void, Boolea
     @Override
     protected Boolean doInBackground(final Void... voids) {
         try {
-            serverQuerier.queryServer();
+            HTTP.post(URL, createPostParameters());
         } catch (final IOException e) {
             App.logError(this, "product addition query failed for some reason: " + e.getMessage());
             return false;
         }
         return true;
+    }
+
+    protected List<NameValuePair> createPostParameters() {
+        final List<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+
+        postParameters.add(new BasicNameValuePair("bcod", product.getBarcode()));
+        postParameters.add(new BasicNameValuePair("name", product.getName()));
+        postParameters.add(new BasicNameValuePair("companyname", product.getCompany()));
+
+        addLogicalInversedParametersTo(postParameters);
+
+        postParameters.add(new BasicNameValuePair("gmo", "0"));
+        postParameters.add(
+                new BasicNameValuePair(
+                        "animals",
+                        String.valueOf(product.wasTestedOnAnimals())));
+        postParameters.add(new BasicNameValuePair("comment", "")); // TODO: empty comment? Maybe not pass it at all?
+
+        return postParameters;
     }
 
     @Override
