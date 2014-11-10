@@ -26,6 +26,7 @@ class ActivityLoadingState
     private static final String PRODUCT_EXTRA = "LoadingState.PRODUCT_EXTRA";
     private String barcode;
     private Product loadedProduct;
+    private boolean isViewInitialized;
 
     /**
      * must be called only before onCreate() call
@@ -47,7 +48,9 @@ class ActivityLoadingState
         this.barcode = barcode;
 
         startLoader();
-        initView();
+        if (App.getCurrentActivity() == getActivity()) {
+            initView();
+        }
     }
 
     private void startLoader() {
@@ -57,12 +60,9 @@ class ActivityLoadingState
     }
 
     private void initView() {
-        final CardboardActivityBase activity = getActivity();
-        if (activity != null) {
-            activity.putToMiddleSlot(createProgressBar());
-        } else {
-            App.assertCondition(false);
-        }
+        getActivity().setNewScanButtonVisibility(View.GONE);
+        getActivity().putToMiddleSlot(createProgressBar());
+        isViewInitialized = true;
     }
 
     private View createProgressBar() {
@@ -102,8 +102,6 @@ class ActivityLoadingState
         if (!getActivity().getSupportLoaderManager().hasRunningLoaders()) {
             startLoader();
         }
-
-        initView();
     }
 
     @Override
@@ -115,12 +113,17 @@ class ActivityLoadingState
     public void onSaveStateData(final Bundle outState) {
         outState.putString(BARCODE_EXTRA, barcode);
         outState.putSerializable(PRODUCT_EXTRA, loadedProduct);
+        isViewInitialized = false;
     }
 
     @Override
     public void onResumeFragments() {
         if (loadedProduct != null) {
             requestStateChangeTo(new ActivityProductDescriptionState(this, loadedProduct));
+        } else {
+            if (!isViewInitialized) {
+                initView();
+            }
         }
     }
 

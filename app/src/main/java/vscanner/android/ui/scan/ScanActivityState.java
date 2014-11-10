@@ -3,6 +3,8 @@ package vscanner.android.ui.scan;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 
 import vscanner.android.App;
 import vscanner.android.ui.CardboardActivityBase;
@@ -50,15 +52,30 @@ abstract class ScanActivityState {
     }
 
     /**
+     * NOTE: Never call it from a state constructor. If you need to change a state in its
+     * constructor, use method requestAsyncStateChangeTo().
      * @throws java.lang.IllegalArgumentException if any argument is null
      */
-    protected final void requestStateChangeTo(final ScanActivityState otherState) {
+    public final void requestStateChangeTo(final ScanActivityState otherState) {
         if (otherState == null) {
             throw new IllegalArgumentException("otherState must not be null");
         }
         App.assertCondition(scanActivity.getState() == this);
         scanActivity.onStateRequestsChangeTo(otherState);
         App.assertCondition(scanActivity.getState() == otherState);
+    }
+
+    /**
+     * @throws java.lang.IllegalArgumentException if any argument is null
+     */
+    public final void requestAsyncStateChangeTo(final ScanActivityState otherState) {
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                requestStateChangeTo(otherState);
+            }
+        });
     }
 
     public abstract void onCreate(final Bundle savedInstanceState);

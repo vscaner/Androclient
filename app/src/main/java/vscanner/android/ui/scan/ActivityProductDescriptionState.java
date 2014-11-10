@@ -14,6 +14,7 @@ import vscanner.android.ui.CardboardActivityBase;
 class ActivityProductDescriptionState extends ScanActivityState {
     private static final String EXTRA_PRODUCT = "ProductDescriptionScanActivityState.EXTRA_PRODUCT";
     private final Product product;
+    private boolean isViewInitialized;
 
     /**
      * @param product must be a valid product (product != null && product.isFullyInitialized())
@@ -26,8 +27,7 @@ class ActivityProductDescriptionState extends ScanActivityState {
         }
         this.product = product;
 
-        // TODO: is it a correct way to check whether the activity is initialized?
-        if (getActivity().findViewById(android.R.id.content) != null) {
+        if (App.getCurrentActivity() == getActivity() && !isViewInitialized) {
             initializeViewBy(product);
         }
     }
@@ -44,6 +44,9 @@ class ActivityProductDescriptionState extends ScanActivityState {
         final CardboardActivityBase activity = getActivity();
         activity.putToMiddleSlot(ProductDescriptionFragment.create(product));
         activity.putToTopSlot(createCowSaysFragmentFor(product));
+        activity.setNewScanButtonVisibility(View.VISIBLE);
+
+        isViewInitialized = true;
     }
 
     private CowSaysFragment createCowSaysFragmentFor(final Product product) {
@@ -72,21 +75,23 @@ class ActivityProductDescriptionState extends ScanActivityState {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        // TODO: new-scan button may start new scan from here, so handle it
-    }
-
-    @Override
     public void onSaveStateData(final Bundle outState) {
         outState.putSerializable(EXTRA_PRODUCT, product);
     }
 
     @Override
     public void onResumeFragments() {
-        // nothing to do
+        if (isViewInitialized) {
+            initializeViewBy(product);
+        }
     }
 
     public static Product parseProductFrom(final Bundle bundle) {
         return (Product) bundle.getSerializable(EXTRA_PRODUCT);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        // nothing to do
     }
 }

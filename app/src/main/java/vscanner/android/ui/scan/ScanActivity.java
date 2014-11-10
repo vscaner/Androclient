@@ -2,9 +2,11 @@ package vscanner.android.ui.scan;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
+import vscanner.android.R;
 import vscanner.android.ui.CardboardActivityBase;
 
 // TODO: handle back button?
@@ -25,6 +27,13 @@ public class ScanActivity extends CardboardActivityBase implements ScanActivityS
         super.onCreate(savedInstanceState);
         Crashlytics.start(this);
         state.onCreate(savedInstanceState);
+
+        findViewById(R.id.button_new_scan).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View view) {
+                state.requestStateChangeTo(new ActivityNewScanState(state, false));
+            }
+        });
     }
 
     @Override

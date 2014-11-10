@@ -19,10 +19,14 @@ import vscanner.android.network.ProductLoader;
 import vscanner.android.ui.CardboardActivityBase;
 
 class ActivityBeforeScanState extends ScanActivityState {
+    private boolean viewInitialized;
+
     protected ActivityBeforeScanState(final ScanActivityState parent) {
         super(parent);
         if (App.getCurrentActivity() == getActivity()) {
-            initView();
+            if (!viewInitialized) {
+                initView();
+            }
         }
     }
 
@@ -31,10 +35,11 @@ class ActivityBeforeScanState extends ScanActivityState {
         // onResumeFragments() will take care of things
     }
 
-    // TODO: do we really need to do it? Because sometimes view may be initialized too many times
     @Override
     public void onResumeFragments() {
-        initView();
+        if (!viewInitialized) {
+            initView();
+        }
     }
 
     private void initView() {
@@ -42,6 +47,7 @@ class ActivityBeforeScanState extends ScanActivityState {
         activity.setNewScanButtonVisibility(View.GONE);
         activity.putToTopSlot(createCowSaysFragment());
         activity.putToMiddleSlot(createPackageButton());
+        viewInitialized = true;
     }
 
     private CowSaysFragment createCowSaysFragment() {
@@ -69,11 +75,7 @@ class ActivityBeforeScanState extends ScanActivityState {
             @Override
             public void onClick(final View view) {
                 if (App.isOnline()) {
-                    final IntentIntegrator scanIntegrator = new IntentIntegrator(getActivity());
-                    final AlertDialog installScannerAppTip = scanIntegrator.initiateScan();
-                    if (installScannerAppTip == null) {
-                        getActivity().showToastWith(R.string.product_description_activity_before_scan_start_message);
-                    }
+                    requestStateChangeTo(new ActivityNewScanState(ActivityBeforeScanState.this, false));
                 } else {
                     getActivity().showToastWith(R.string.raw_internet_connection_is_not_available);
                 }
@@ -84,24 +86,12 @@ class ActivityBeforeScanState extends ScanActivityState {
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent intent) {
-        final IntentResult scanningResult =
-                IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
-
-        // TODO: do something if result is invalid. Maybe show the NEW COOL STATE WITHOUT DATA?
-        if (scanningResult != null) {
-            final String scannedBarcode = scanningResult.getContents();
-            if (BarcodeToolkit.isValid(scannedBarcode)) {
-                getActivity().showToastWith(R.string.raw_barcode_received);
-
-                requestStateChangeTo(new ActivityLoadingState(this, scannedBarcode));
-            } else {
-                getActivity().showToastWith(R.string.raw_barcode_not_received);
-            }
-        }
+        App.assertCondition(false);
     }
 
     @Override
     public void onSaveStateData(final Bundle outState) {
+        viewInitialized = false;
         // nothing to do
     }
 }

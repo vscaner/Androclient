@@ -36,6 +36,10 @@ public class App extends Application {
         Log.d(getName(), requester.getClass().toString() + ": " + message);
     }
 
+    public static void logInfo(final Object requester, final String message) {
+        Log.i(getName(), requester.getClass().toString() + ": " + message);
+    }
+
     public static void wtf(final Object requester, final String message) {
         Log.wtf(getName(), requester.getClass().toString() + ": " + message);
     }
