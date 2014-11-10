@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
+import vscanner.android.App;
 import vscanner.android.R;
 import vscanner.android.ui.CardboardActivityBase;
 
@@ -31,7 +32,11 @@ public class ScanActivity extends CardboardActivityBase implements ScanActivityS
         findViewById(R.id.button_new_scan).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                state.requestStateChangeTo(new ActivityNewScanState(state, false));
+                if (App.isOnline()) {
+                    state.requestStateChangeTo(new ActivityNewScanState(state, false));
+                } else {
+                    showToastWith(R.string.raw_internet_connection_is_not_available);
+                }
             }
         });
     }
