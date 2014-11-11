@@ -29,7 +29,7 @@ final class ActivityNewScanState extends ScanActivityState {
             final IntentIntegrator scanIntegrator = new IntentIntegrator(getActivity());
             final AlertDialog installScannerAppTip = scanIntegrator.initiateScan();
             if (installScannerAppTip == null) {
-                getActivity().showToastWith(R.string.product_description_activity_before_scan_start_message);
+                getActivity().showToastWith(R.string.scan_activity_before_scan_start_message);
             } else {
                 // XZing is not installed
             }

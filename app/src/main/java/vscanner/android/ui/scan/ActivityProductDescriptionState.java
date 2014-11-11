@@ -3,8 +3,6 @@ package vscanner.android.ui.scan;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import vscanner.android.App;
 import vscanner.android.Product;
@@ -23,11 +21,11 @@ class ActivityProductDescriptionState extends ScanActivityState {
     protected ActivityProductDescriptionState(final ScanActivityState parent, final Product product) {
         super(parent);
         if (product == null || !product.isFullyInitialized()) {
-            throw new IllegalArgumentException("product must not be valid");
+            throw new IllegalArgumentException("product must be valid");
         }
         this.product = product;
 
-        if (App.getCurrentActivity() == getActivity() && !isViewInitialized) {
+        if (App.getFrontActivity() == getActivity() && !isViewInitialized) {
             initializeViewBy(product);
         }
     }
@@ -45,6 +43,8 @@ class ActivityProductDescriptionState extends ScanActivityState {
         activity.putToMiddleSlot(ProductDescriptionFragment.create(product));
         activity.putToTopSlot(createCowSaysFragmentFor(product));
         activity.setNewScanButtonVisibility(View.VISIBLE);
+        activity.removeBottomButtons();
+        activity.addBottomButtonWith(null, R.string.scan_activity_report_button_text);
 
         isViewInitialized = true;
     }
@@ -57,17 +57,17 @@ class ActivityProductDescriptionState extends ScanActivityState {
         if (product.isVegan()) {
             cowSaysFragment.setCowsText(
                     getActivity().getString(
-                            R.string.product_description_activity_product_status_vegan));
+                            R.string.scan_activity_product_status_vegan));
             cowSaysFragment.setCowMood(CowState.Mood.GOOD);
         } else if (product.isVegetarian()) {
             cowSaysFragment.setCowsText(
                     getActivity().getString(
-                            R.string.product_description_activity_product_status_vegetarian));
+                            R.string.scan_activity_product_status_vegetarian));
             cowSaysFragment.setCowMood(CowState.Mood.OK);
         } else {
             cowSaysFragment.setCowsText(
                     getActivity().getString(
-                            R.string.product_description_activity_product_status_bad));
+                            R.string.scan_activity_product_status_bad));
             cowSaysFragment.setCowMood(CowState.Mood.BAD);
         }
 
@@ -92,6 +92,6 @@ class ActivityProductDescriptionState extends ScanActivityState {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        // nothing to do
+        App.assertCondition(false);
     }
 }

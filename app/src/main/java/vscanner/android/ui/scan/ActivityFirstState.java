@@ -32,6 +32,8 @@ final class ActivityFirstState extends ScanActivityState {
                 nextState = new ActivityLoadingState(this);
             } else if (nextStateClassName.equals(ActivityNewScanState.class.toString())) {
                 nextState = new ActivityNewScanState(this, true);
+            } else if (nextStateClassName.equals(ActivityProductNotFoundState.class.toString())) {
+                nextState = new ActivityProductNotFoundState(this);
             } else {
                 App.assertCondition(false);
                 nextState = new ActivityBeforeScanState(this);

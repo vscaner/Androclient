@@ -48,10 +48,10 @@ public class ProductDescriptionFragment extends Fragment {
             final TextView animalsTestsText = (TextView) root.findViewById(R.id.text_tests_on_animals);
             if (product.wasTestedOnAnimals()) {
                 animalTestsImage.setImageResource(R.drawable.tested_on_animals_true);
-                animalsTestsText.setText(R.string.product_description_activity_tested_on_animals_title);
+                animalsTestsText.setText(R.string.scan_activity_tested_on_animals_title);
             } else {
                 animalTestsImage.setImageResource(R.drawable.tested_on_animals_false);
-                animalsTestsText.setText(R.string.product_description_activity_not_tested_on_animals_title);
+                animalsTestsText.setText(R.string.scan_activity_not_tested_on_animals_title);
             }
         } else {
             App.logError(this, "product is null, invalid data will be shown");

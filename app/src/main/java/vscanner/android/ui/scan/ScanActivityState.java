@@ -80,6 +80,8 @@ abstract class ScanActivityState {
 
     public abstract void onCreate(final Bundle savedInstanceState);
 
+    public abstract void onResumeFragments();
+
     public abstract void onActivityResult(final int requestCode, final int resultCode, final Intent intent);
 
     public final void onSaveInstanceState(final Bundle outState) {
@@ -88,6 +90,4 @@ abstract class ScanActivityState {
     }
 
     public abstract void onSaveStateData(final Bundle outState);
-
-    public abstract void onResumeFragments();
 }

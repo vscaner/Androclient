@@ -77,7 +77,7 @@ public final class ProductLoaderResultHolder {
     }
 
     /**
-     * @return not null.
+     * @return not null
      */
     public ResultType getResultType() {
         return resultType;

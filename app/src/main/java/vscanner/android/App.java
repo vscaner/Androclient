@@ -100,7 +100,13 @@ public class App extends Application {
         currentActivity = activity;
     }
 
-    public static MyActivityBase getCurrentActivity() {
+    /**
+     * NOTE that an Activity IS NOT considered as the front one
+     * before its 'onResumeFragments()' is called<br>
+     * This means that there's is NO front activity during a 'onCreate()' call of an initializing activity
+     * @return front activity
+     */
+    public static MyActivityBase getFrontActivity() {
         return currentActivity;
     }
 }

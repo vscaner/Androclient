@@ -7,7 +7,6 @@ import android.os.Looper;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
@@ -19,9 +18,11 @@ import vscanner.android.network.ProductLoader;
 import vscanner.android.network.ProductLoaderResultHolder;
 import vscanner.android.ui.CardboardActivityBase;
 
+// TODO: this state should has some timeout - this would protect us from infinite progress bar
 class ActivityLoadingState
         extends ScanActivityState
         implements LoaderManager.LoaderCallbacks<ProductLoaderResultHolder> {
+    private static final int LOADER_ID = 1;
     private static final String BARCODE_EXTRA = "LoadingState.BARCODE_EXTRA";
     private static final String PRODUCT_EXTRA = "LoadingState.PRODUCT_EXTRA";
     private String barcode;
@@ -33,7 +34,7 @@ class ActivityLoadingState
      */
     public ActivityLoadingState(final ScanActivityState parent) {
         super(parent);
-        App.assertCondition(App.getCurrentActivity() != getActivity());
+        App.assertCondition(App.getFrontActivity() != getActivity());
     }
 
     /**
@@ -48,7 +49,7 @@ class ActivityLoadingState
         this.barcode = barcode;
 
         startLoader();
-        if (App.getCurrentActivity() == getActivity()) {
+        if (App.getFrontActivity() == getActivity()) {
             initView();
         }
     }
@@ -56,12 +57,22 @@ class ActivityLoadingState
     private void startLoader() {
         final Bundle loaderBundle = new Bundle();
         loaderBundle.putString(PRODUCT_EXTRA, barcode);
-        getActivity().getSupportLoaderManager().initLoader(0, loaderBundle, this).forceLoad();
+        getActivity().getSupportLoaderManager().destroyLoader(LOADER_ID);
+        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, loaderBundle, this).forceLoad();
     }
 
     private void initView() {
-        getActivity().setNewScanButtonVisibility(View.GONE);
-        getActivity().putToMiddleSlot(createProgressBar());
+        final CardboardActivityBase activity = getActivity();
+
+        activity.setNewScanButtonVisibility(View.GONE);
+        activity.putToMiddleSlot(createProgressBar());
+        activity.removeBottomButtons();
+
+        final CowSaysFragment cowSaysFragment = new CowSaysFragment();
+        cowSaysFragment.setCowMood(CowState.Mood.NEUTRAL);
+        cowSaysFragment.setCowsText(activity.getString(R.string.scan_activity_product_data_loading));
+        activity.putToTopSlot(cowSaysFragment);
+
         isViewInitialized = true;
     }
 
@@ -143,17 +154,17 @@ class ActivityLoadingState
                 final ProductLoaderResultHolder.ResultType resultType = resultHolder.getResultType();
 
                 if (resultType == ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT) {
-                    // TODO: product addition state
+                    requestStateChangeTo(new ActivityProductNotFoundState(ActivityLoadingState.this));
                     return;
                 } else if (resultType != ProductLoaderResultHolder.ResultType.SUCCESS) {
                     getActivity().showToastWith(
-                            R.string.product_description_activity_product_downloading_error_message);
+                            R.string.scan_activity_product_downloading_error_message);
                     App.logError(this, "a task failed at downloading a product");
                     requestStateChangeTo(new ActivityBeforeScanState(ActivityLoadingState.this));
                     return;
                 }
 
-                if (App.getCurrentActivity() == getActivity()) {
+                if (App.getFrontActivity() == getActivity()) {
                     requestStateChangeTo(
                             new ActivityProductDescriptionState(
                                     ActivityLoadingState.this,

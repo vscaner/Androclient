@@ -1,21 +1,13 @@
 package vscanner.android.ui.scan;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
-
 import vscanner.android.App;
-import vscanner.android.BarcodeToolkit;
-import vscanner.android.Product;
 import vscanner.android.R;
-import vscanner.android.network.ProductLoaderResultHolder;
-import vscanner.android.network.ProductLoader;
 import vscanner.android.ui.CardboardActivityBase;
 
 class ActivityBeforeScanState extends ScanActivityState {
@@ -23,7 +15,7 @@ class ActivityBeforeScanState extends ScanActivityState {
 
     protected ActivityBeforeScanState(final ScanActivityState parent) {
         super(parent);
-        if (App.getCurrentActivity() == getActivity()) {
+        if (App.getFrontActivity() == getActivity()) {
             if (!viewInitialized) {
                 initView();
             }
@@ -47,6 +39,7 @@ class ActivityBeforeScanState extends ScanActivityState {
         activity.setNewScanButtonVisibility(View.GONE);
         activity.putToTopSlot(createCowSaysFragment());
         activity.putToMiddleSlot(createPackageButton());
+        activity.removeBottomButtons();
         viewInitialized = true;
     }
 

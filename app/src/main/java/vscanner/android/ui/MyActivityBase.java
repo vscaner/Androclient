@@ -1,9 +1,6 @@
 package vscanner.android.ui;
 
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
 
@@ -24,14 +21,14 @@ public abstract class MyActivityBase extends ActionBarActivity {
     protected void onResumeFragments() {
         super.onResumeFragments();
         App.onActivityResumeFragments(this);
-        App.assertCondition(this == App.getCurrentActivity());
+        App.assertCondition(this == App.getFrontActivity());
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         App.onActivityPause(this);
-        App.assertCondition(this != App.getCurrentActivity());
+        App.assertCondition(this != App.getFrontActivity());
     }
 
     @Override
