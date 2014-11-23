@@ -23,8 +23,8 @@ android {
         applicationId "vscanner.android"
         minSdkVersion 8
         targetSdkVersion 20
-        versionCode 1
-        versionName "0.1debug"
+        versionCode 2
+        versionName "0.11debug"
     }
     buildTypes {
         release {
