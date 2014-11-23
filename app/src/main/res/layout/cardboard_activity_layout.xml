@@ -40,4 +40,17 @@
             android:layout_weight="0.75"
             android:orientation="horizontal"/>
     </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/progress_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#50404040"
+        android:visibility="gone"
+        android:clickable="true">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
 </FrameLayout>

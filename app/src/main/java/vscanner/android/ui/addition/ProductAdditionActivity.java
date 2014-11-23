@@ -20,6 +20,7 @@ import vscanner.android.network.ParcelableNameValuePair;
 import vscanner.android.network.http.HttpRequestResult;
 import vscanner.android.ui.CardboardActivityBase;
 import vscanner.android.ui.UIConstants;
+import vscanner.android.ui.scan.ScanActivity;
 
 public class ProductAdditionActivity extends CardboardActivityBase {
     private static final String ADDITION_URL = "http://lumeria.ru/vscaner/tobase.php";
@@ -53,6 +54,7 @@ public class ProductAdditionActivity extends CardboardActivityBase {
                                 ADDITION_URL,
                                 createPostParametersFor(product));
                         showToastWith(R.string.product_addition_activity_submit_request_sent_toast);
+                        setProgressForegroundVisibility(View.VISIBLE);
                     }
                 }
             } else {
@@ -98,8 +100,12 @@ public class ProductAdditionActivity extends CardboardActivityBase {
 
     @Override
     protected final void onHttpPostResult(final HttpRequestResult resultHolder) {
+        setProgressForegroundVisibility(View.GONE);
+
         if (resultHolder.getResultType() == HttpRequestResult.ResultType.SUCCESS) {
             showToastWith(R.string.product_addition_activity_on_request_successfully_delivered);
+            startActivity(new Intent(this, ScanActivity.class));
+            finish();
         } else if (resultHolder.getResultType() == HttpRequestResult.ResultType.NETWORK_ERROR) {
             showToastWith(R.string.product_addition_activity_on_request_failed);
         } else {

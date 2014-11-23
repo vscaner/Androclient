@@ -58,4 +58,10 @@ public class ScanActivity extends CardboardActivityBase implements ScanActivityS
         super.onResumeFragments();
         state.onResumeFragments();
     }
+
+    @Override
+    protected void onNewIntent(final Intent intent) {
+        super.onNewIntent(intent);
+        state.requestStateChangeTo(new ActivityBeforeScanState(state));
+    }
 }

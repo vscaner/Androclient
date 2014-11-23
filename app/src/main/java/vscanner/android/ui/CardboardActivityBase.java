@@ -16,16 +16,35 @@ import vscanner.android.R;
 
 // TODO: create getMiddleFragment, .. methods - they're needed for blinkless states changing in ScanActivity
 public abstract class CardboardActivityBase extends MyActivityBase {
+    private static final String EXTRA_PROGRESS_FOREGROUND_VISIBILITY =
+            CardboardActivityBase.class.getCanonicalName() + ".EXTRA_PROGRESS_FOREGROUND_VISIBILITY";
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.cardboard_activity_layout);
+
+        if (savedInstanceState != null) {
+            setProgressForegroundVisibility(savedInstanceState.getInt(EXTRA_PROGRESS_FOREGROUND_VISIBILITY));
+        }
     }
 
     @Override
     public final void setContentView(final int layoutId) {
         App.logError(this, "no child is allowed to use its own layout");
         App.assertCondition(false);
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(
+                EXTRA_PROGRESS_FOREGROUND_VISIBILITY,
+                findViewById(R.id.progress_foreground).getVisibility());
+    }
+
+    public final void setProgressForegroundVisibility(final int visibility) {
+        findViewById(R.id.progress_foreground).setVisibility(visibility);
     }
 
     public final void setWeights(
