@@ -78,6 +78,10 @@ abstract class ScanActivityState {
         });
     }
 
+    protected final boolean isCurrent() {
+        return scanActivity.getState() == this;
+    }
+
     public abstract void onCreate(final Bundle savedInstanceState);
 
     public abstract void onResumeFragments();

@@ -67,10 +67,12 @@ class ActivityBeforeScanState extends ScanActivityState {
         startScanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                if (App.isOnline()) {
-                    requestStateChangeTo(new ActivityNewScanState(ActivityBeforeScanState.this, false));
-                } else {
-                    getActivity().showToastWith(R.string.raw_internet_connection_is_not_available);
+                if (isCurrent()) {
+                    if (App.isOnline()) {
+                        requestStateChangeTo(new ActivityNewScanState(ActivityBeforeScanState.this, false));
+                    } else {
+                        getActivity().showToastWith(R.string.raw_internet_connection_is_not_available);
+                    }
                 }
             }
         });
