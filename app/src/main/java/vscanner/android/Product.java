@@ -3,11 +3,11 @@ package vscanner.android;
 import java.io.Serializable;
 
 public final class Product implements Serializable {
+    public static enum Status { NOT_VEGETARIAN, VEGETARIAN, VEGAN }
     private final String barcode;
     private final String name;
     private final String company;
-    private final boolean isVegan;
-    private final boolean isVegetarian;
+    private final Status status;
     private final boolean wasTestedOnAnimals;
     private final boolean isFullyInitialized;
 
@@ -22,33 +22,33 @@ public final class Product implements Serializable {
         this.barcode = barcode;
         this.name = "";
         this.company = "";
-        this.isVegan = false;
-        this.isVegetarian = false;
+        this.status = Status.NOT_VEGETARIAN;
         this.wasTestedOnAnimals = true;
         this.isFullyInitialized = false;
     }
 
     /**
      * @param barcode must be valid (BarcodeToolkit.isValid(..) == true).
-     * @throws java.lang.IllegalArgumentException if barcode is not valid.
+     * @param status must be not null
+     * @throws java.lang.IllegalArgumentException if any parameter is invalid.
      */
     public Product(
             final String barcode,
             final String name,
             final String company,
-            final boolean isVegan,
-            final boolean isVegetarian,
+            final Status status,
             final boolean wasTestedOnAnimals) throws IllegalArgumentException  {
         if (!BarcodeToolkit.isValid(barcode)) {
             throw new IllegalArgumentException("barcode is not valid");
+        } else if (status == null) {
+            throw new IllegalArgumentException("status is null");
         }
         App.assertCondition(name != null);
         App.assertCondition(company != null);
         this.barcode = barcode;
         this.name = name;
         this.company = company;
-        this.isVegan = isVegan;
-        this.isVegetarian = isVegetarian;
+        this.status = status;
         this.wasTestedOnAnimals = wasTestedOnAnimals;
         this.isFullyInitialized = true;
     }
@@ -66,11 +66,18 @@ public final class Product implements Serializable {
     }
 
     public boolean isVegan() {
-        return isVegan;
+        return status == Status.VEGAN;
     }
 
     public boolean isVegetarian() {
-        return isVegetarian;
+        return status == Status.VEGAN || status == Status.VEGETARIAN;
+    }
+
+    /**
+     * @return not null.
+     */
+    public Status getStatus() {
+        return status;
     }
 
     public boolean wasTestedOnAnimals() {

@@ -11,6 +11,7 @@ import java.util.List;
 
 import vscanner.android.App;
 import vscanner.android.BarcodeToolkit;
+import vscanner.android.network.http.Http;
 
 public final class ErrorReportingAsyncTask
         extends AsyncTask<Void, Void, Boolean> {
@@ -49,7 +50,7 @@ public final class ErrorReportingAsyncTask
     @Override
     protected Boolean doInBackground(final Void... voids) {
         try {
-            HTTP.post(REQUEST_URL, createPostParameters());
+            Http.post(REQUEST_URL, createPostParameters());
         } catch (final IOException e) {
             App.logError(this, "error query failed for some reason: " + e.getMessage());
             return false;

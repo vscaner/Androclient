@@ -7,14 +7,38 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import vscanner.android.App;
+import vscanner.android.BarcodeToolkit;
 import vscanner.android.R;
 import vscanner.android.ui.CardboardActivityBase;
+import vscanner.android.ui.UIConstants;
+import vscanner.android.ui.addition.ProductAdditionActivity;
 
 final class ActivityProductNotFoundState extends ScanActivityState {
+    private static final String BARCODE_EXTRA = "ActivityProductNotFoundState.BARCODE_EXTRA";
+    private String barcode;
     private boolean isViewInitialized;
 
+    /**
+     * must be called only before onCreate() call
+     */
     protected ActivityProductNotFoundState(final ScanActivityState parent) {
         super(parent);
+        if (App.getFrontActivity() == getActivity()) {
+            initView();
+        }
+    }
+
+    /**
+     * @param barcode must be a valid barcode (ie BarcodeToolkit.isValid(barcode) == true)
+     * @throws IllegalArgumentException if any parameter is invalid
+     */
+    public ActivityProductNotFoundState(final ScanActivityState parent, final String barcode) {
+        super(parent);
+        if (!BarcodeToolkit.isValid(barcode)) {
+            throw new IllegalArgumentException("barcode is invalid");
+        }
+        this.barcode = barcode;
+
         if (App.getFrontActivity() == getActivity()) {
             initView();
         }
@@ -30,8 +54,13 @@ final class ActivityProductNotFoundState extends ScanActivityState {
         activity.removeBottomButtons();
         // TODO: should the listener also change a state? Cause a user eventually may return to the activity
         activity.addBottomButtonWith(
-                null,
-                R.string.scan_activity_product_data_add_product_button_text);
+                R.string.scan_activity_product_data_add_product_button_text, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProductAdditionActivity.startFor(barcode, activity);
+                    }
+                }
+        );
 
         isViewInitialized = true;
     }
@@ -51,7 +80,7 @@ final class ActivityProductNotFoundState extends ScanActivityState {
                 (int) activity.getResources().getDimension(R.dimen.activity_content_horizontal_margin);
 
         additionRequestView.setText(R.string.scan_activity_product_addition_request);
-        additionRequestView.setTextSize(18);
+        additionRequestView.setTextSize(UIConstants.MEDIUM_TEXT_SIZE);
         additionRequestView.setBackgroundResource(R.drawable.text_cloud);
         additionRequestView.setPadding(margin, margin, margin, margin);
 
@@ -71,6 +100,10 @@ final class ActivityProductNotFoundState extends ScanActivityState {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         initView();
+        if (savedInstanceState != null) {
+            barcode = savedInstanceState.getString(BARCODE_EXTRA);
+        }
+        App.assertCondition(BarcodeToolkit.isValid(barcode));
     }
 
     @Override
@@ -88,5 +121,6 @@ final class ActivityProductNotFoundState extends ScanActivityState {
     @Override
     public void onSaveStateData(final Bundle outState) {
         isViewInitialized = false;
+        outState.putString(BARCODE_EXTRA, barcode);
     }
 }

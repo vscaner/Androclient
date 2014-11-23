@@ -28,6 +28,36 @@ public abstract class CardboardActivityBase extends MyActivityBase {
         App.assertCondition(false);
     }
 
+    public final void setWeights(
+            final float topSlotWeight,
+            final float middleSlotWeight,
+            final float buttonsContainerWeight) {
+        setWeight(findViewById(R.id.top_content_container), topSlotWeight);
+        setWeight(findViewById(R.id.middle_content_container), middleSlotWeight);
+        setWeight(findViewById(R.id.buttons_container), buttonsContainerWeight);
+    }
+
+    private void setWeight(final View view, final float weight) {
+        final LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) view.getLayoutParams();
+        params.weight = weight;
+    }
+
+    public final Fragment getTopFragment() {
+        final CardboardSlotData slotData =
+                new CardboardSlotData(
+                        CardboardSlotData.Position.TOP,
+                        findViewById(android.R.id.content));
+        return getSupportFragmentManager().findFragmentByTag(slotData.getFragmentTag());
+    }
+
+    public final Fragment getMiddleFragment() {
+        final CardboardSlotData slotData =
+                new CardboardSlotData(
+                        CardboardSlotData.Position.MIDDLE,
+                        findViewById(android.R.id.content));
+        return getSupportFragmentManager().findFragmentByTag(slotData.getFragmentTag());
+    }
+
     public final void cleanTopSlot() {
         final CardboardSlotData slotData =
                 new CardboardSlotData(
@@ -120,8 +150,7 @@ public abstract class CardboardActivityBase extends MyActivityBase {
      * @return created button, not null
      */
     public final Button addBottomButtonWith(
-            final View.OnClickListener onClickListener,
-            final int stringId) {
+            final int stringId, final View.OnClickListener onClickListener) {
         final Button button = createGreenButtonWith(onClickListener, stringId);
         validateButtonsPositions();
         return button;
@@ -133,7 +162,7 @@ public abstract class CardboardActivityBase extends MyActivityBase {
         button.setBackgroundResource(R.drawable.green_button_selector);
         button.setOnClickListener(onClickListener);
         button.setText(stringId);
-        button.setTextSize(14);
+        button.setTextSize(UIConstants.SMALL_TEXT_SIZE);
         button.setTextColor(getResources().getColor(android.R.color.white));
         RelativeLayout.LayoutParams buttonParams =
                 new RelativeLayout.LayoutParams(

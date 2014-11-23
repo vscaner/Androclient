@@ -23,7 +23,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="15dip"
                 android:layout_marginTop="15dp"
-                android:text="@string/scan_activity_product_info_title"/>
+                android:text="@string/product_description_fragment_product_info_title"/>
             <TableLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -50,7 +50,7 @@
                     <TextView
                         android:gravity="right"
                         android:paddingRight="6dp"
-                        android:text="@string/scan_activity_company_title"/>
+                        android:text="@string/product_description_fragment_company_title"/>
                     <TextView
                         android:id="@+id/text_company_name"
                         android:text="Счастливая Коровка"/>
@@ -61,7 +61,7 @@
                     <TextView
                         android:gravity="right"
                         android:paddingRight="6dp"
-                        android:text="@string/scan_activity_product_name_title"/>
+                        android:text="@string/product_description_fragment_product_name_title"/>
                     <TextView
                         android:id="@+id/text_product_name"
                         android:text="Соевое молоко"/>
@@ -90,7 +90,7 @@
                 <TextView
                     android:id="@+id/text_tests_on_animals"
                     android:layout_gravity="center_vertical"
-                    android:text="@string/scan_activity_not_tested_on_animals_title"/>
+                    android:text="@string/product_description_fragment_not_tested_on_animals_title"/>
             </TableRow>
         </TableLayout>
     </LinearLayout>

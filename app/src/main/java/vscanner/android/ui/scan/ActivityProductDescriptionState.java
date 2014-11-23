@@ -44,7 +44,7 @@ class ActivityProductDescriptionState extends ScanActivityState {
         activity.putToTopSlot(createCowSaysFragmentFor(product));
         activity.setNewScanButtonVisibility(View.VISIBLE);
         activity.removeBottomButtons();
-        activity.addBottomButtonWith(null, R.string.scan_activity_report_button_text);
+        activity.addBottomButtonWith(R.string.scan_activity_report_button_text, null);
 
         isViewInitialized = true;
     }

@@ -1,4 +1,4 @@
-package vscanner.android.network;
+package vscanner.android.network.http;
 
 import android.webkit.URLUtil;
 
@@ -20,21 +20,21 @@ import java.util.List;
 
 import vscanner.android.App;
 
-final class HTTP {
+public final class Http {
     private static final String ENCODING = "UTF-8";
 
-    private HTTP() {
+    private Http() {
     }
 
     /**
      * @param url must be a valid url, ie (URLUtil.isValidUrl(url) == true)
-     * @return server's reply
+     * @return server's reply, not null
      * @throws IOException if something went wrong during querying.
      * @throws IllegalArgumentException if any argument is not valid
      */
     public static String post(
             final String url,
-            final List<NameValuePair> postParameters) throws IllegalArgumentException, IOException {
+            final List<? extends NameValuePair> postParameters) throws IllegalArgumentException, IOException {
         if (!URLUtil.isValidUrl(url)) {
             throw new IllegalArgumentException("given url (" + url + ") is not valid");
         }
@@ -46,7 +46,7 @@ final class HTTP {
         return decode(response);
     }
 
-    private static List<NameValuePair> validate(final List<NameValuePair> postParameters) {
+    private static List<NameValuePair> validate(final List<? extends NameValuePair> postParameters) {
         App.assertCondition(postParameters != null);
         if (postParameters == null) {
             return new ArrayList<NameValuePair>(0);

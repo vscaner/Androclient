@@ -40,32 +40,47 @@ public class App extends Application {
         Log.i(getName(), requester.getClass().toString() + ": " + message);
     }
 
+    public static void logInfo(final Object requester, final String message, final Exception e) {
+        Log.i(getName(), requester.getClass().toString() + ": " + message, e);
+    }
+
     public static void wtf(final Object requester, final String message) {
         Log.wtf(getName(), requester.getClass().toString() + ": " + message);
     }
 
-    /**
-     * MUST NOT THROW IN RELEASE VERSION
-     */
     public static void assertCondition(final boolean condition) {
         if (condition == false) {
-//            Crashlytics.log(
-//                    "ASSERTATION FAILED!\n"
-//                            + Arrays.toString(Thread.currentThread().getStackTrace()));
-            throw new AssertionError();
+            if (BuildConfig.DEBUG) {
+                throw new AssertionError();
+            } else {
+                Crashlytics.log(
+                        "ASSERTATION FAILED!\n"
+                                + Arrays.toString(Thread.currentThread().getStackTrace()));
+            }
         }
     }
 
-    /**
-     * MUST NOT THROW IN RELEASE VERSION
-     */
     public static void assertCondition(final boolean condition, final String message) {
         if (condition == false) {
             logError(App.class, message);
-//            Crashlytics.log(
-//                    "ASSERTATION FAILED!\n"
-//                            + Arrays.toString(Thread.currentThread().getStackTrace()));
-            throw new AssertionError();
+            if (BuildConfig.DEBUG) {
+                throw new AssertionError();
+            } else {
+                Crashlytics.log(
+                        "ASSERTATION FAILED! message: '" + message + "'\n"
+                                + Arrays.toString(Thread.currentThread().getStackTrace()));
+            }
+        }
+    }
+
+    public static void error(final String message) {
+        logError(App.class, message);
+        if (BuildConfig.DEBUG) {
+            throw new Error(message);
+        } else {
+            Crashlytics.log(
+                    "ERROR! message: '" + message + "'\n"
+                            + Arrays.toString(Thread.currentThread().getStackTrace()));
         }
     }
 
@@ -104,6 +119,7 @@ public class App extends Application {
      * NOTE that an Activity IS NOT considered as the front one
      * before its 'onResumeFragments()' is called<br>
      * This means that there's is NO front activity during a 'onCreate()' call of an initializing activity
+     *
      * @return front activity
      */
     public static MyActivityBase getFrontActivity() {

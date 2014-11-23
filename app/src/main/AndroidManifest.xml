@@ -20,8 +20,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="vscanner.android.ui.ProductAdditionActivity"
+            android:name="vscanner.android.ui.addition.ProductAdditionActivity"
             android:label="@string/app_name" />
+        <service android:name="vscanner.android.network.http.HttpService" />
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="de80313f5f43d719218414e4cc41762af7e4e352"/>

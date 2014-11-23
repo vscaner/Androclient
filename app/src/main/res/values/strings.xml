@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Context dependent strings names start with the context.-->
+    <!--Context dependent strings names start with their context.-->
     <!--Context independent strings start with 'raw'.-->
-    <!--This naming convention is supposed show which string might be used by different context
+    <!--This naming convention is supposed to show which string might be used by different context
     without a fear that someone would change its (string's) content somewhen.-->
     <string name="app_name">VScanner</string>
 
@@ -16,17 +16,18 @@
     <string name="internet_unavailable_positive_button_text">Еще разок</string>
     <string name="internet_unavailable_negative_button_text">Нет, спасибо</string>
 
-    <string name="scan_activity_product_name_title">Наименование:</string>
-    <string name="scan_activity_company_title">Производитель:</string>
+    <string name="product_description_fragment_product_name_title">Наименование:</string>
+    <string name="product_description_fragment_company_title">Производитель:</string>
+    <string name="product_description_fragment_not_tested_on_animals_title">Не тестировался на животных</string>
+    <string name="product_description_fragment_tested_on_animals_title">Тестировался на животных</string>
+    <string name="product_description_fragment_product_info_title">Информация о продукте</string>
+
     <string name="scan_activity_product_downloading_error_message">Ой, ошибка
         загрузки данных из сервера</string>
     <string name="scan_activity_before_scan_start_message">Поднесите камеру к штрих-коду</string>
-    <string name="scan_activity_not_tested_on_animals_title">Не тестировался на животных</string>
-    <string name="scan_activity_tested_on_animals_title">Тестировался на животных</string>
     <string name="scan_activity_product_status_vegan">Продукт веганский!</string>
     <string name="scan_activity_product_status_vegetarian">Продукт вегетарианский!</string>
     <string name="scan_activity_product_status_bad">Продукт не вегетарианский!</string>
-    <string name="scan_activity_product_info_title">Информация о продукте</string>
     <string name="scan_activity_report_button_text">Пожаловаться</string>
     <string name="scan_activity_product_data_loading">Информация загружается</string>
     <string name="scan_activity_product_unknown">Неизвестный продукт</string>
@@ -34,30 +35,37 @@
         однако Вы можете помочь нам, заполнив информацию о нём</string>
     <string name="scan_activity_product_data_add_product_button_text">Заполнить информацию</string>
 
-    <string name="product_addition_activity_product_name_title">Наименование</string>
-    <string name="product_addition_activity_company_title">Производитель</string>
-    <string name="product_addition_activity_not_vegetarian_title">Содержит части животных</string>
-    <string name="product_addition_activity_not_vegan_title">Содержит молоко или яйца</string>
-    <string name="product_addition_activity_was_tested_on_animals_title">Тестировался на животных</string>
-    <string name="product_addition_activity_product_name_length_error_message">
+    <string name="product_addition_fragment_company_name_hint">Имя производителя</string>
+    <string name="product_addition_fragment_product_name_hint">Имя продукта</string>
+    <string name="product_addition_fragment_not_vegetarian_title">Не-вег.</string>
+    <string name="product_addition_fragment_vegetarian_title">Вегетарианский</string>
+    <string name="product_addition_fragment_vegan_title">Веганский</string>
+    <string name="product_addition_fragment_was_tested_on_animals_title">Тестировался на животных</string>
+    <string name="product_addition_fragment_product_name_length_error_message">
         Имя продукта должно быть длинее %d символов</string>
-    <string name="product_addition_activity_company_name_length_error_message">
+    <string name="product_addition_fragment_company_name_length_error_message">
         Имя производителя должно быть длинее %d символов</string>
-    <string name="product_addition_activity_data_sending_fail_message">
+    <string name="product_addition_fragment_product_status_error_message">
+        Не выбран статус продукта</string>
+    <string name="product_addition_fragment_data_sending_fail_message">
         Ой, не удалось отправить данные</string>
-    <string name="product_addition_activity_product_comment_title">Комментарий:</string>
 
-    <string name="raw_scan_a_barcode_first">
-        Сперва отсканируйте штих-код</string>
+    <string name="product_addition_activity_title">Новый продукт!</string>
+    <string name="product_addition_activity_submit_request_sent_toast">
+        Запрос на добавление товара отправлен</string>
+    <string name="product_addition_activity_on_request_successfully_delivered">
+        Запрос на добавление товара успешно доставлен</string>
+    <string name="product_addition_activity_on_request_failed">
+        Произошла ошибка во время отправки запроса на сервер</string>
+
+    <string name="raw_scan_a_barcode_first">Сперва отсканируйте штих-код</string>
     <string name="raw_connecting_to_database">Соединение с базой</string>
     <string name="raw_barcode_received">Получен штрих-код</string>
     <string name="raw_barcode_not_received">Не получен штрих-код</string>
     <string name="raw_internet_connection_is_not_available">Отсутствует соединение с интернетом</string>
-    <string name="raw_YES">ДА</string>
-    <string name="raw_NO">НЕТ</string>
-    <string name="raw_send">Отправить</string>
-    <string name="raw_add">Добавить</string>
     <string name="raw_oops_an_unknown_error_occurred">Ой, возникла неизвестная ошибка</string>
     <string name="raw_new_scan">Сканировать снова</string>
     <string name="raw_touch_to_scan">Коснитесь для сканирования!</string>
+    <string name="raw_submit">Опубликовать</string>
+
 </resources>

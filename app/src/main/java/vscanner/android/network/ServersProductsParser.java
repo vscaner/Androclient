@@ -52,19 +52,34 @@ class ServersProductsParser {
         return string.length() - string.replace(SEPARATOR_STRING, "").length();
     }
 
-    private static Product parse(final String[] arguments, final String barcode) {
+    private static Product parse(final String[] arguments, final String barcode) throws ParseException {
         final String name = arguments[0];
         final boolean isVegan = arguments[1].equals("0");
         final boolean isVegetarian = arguments[2].equals("0");
         final boolean wasTestedOnAnimals = arguments[3].equals("1");
         final String company = arguments[5];
 
-        return new Product(
-                barcode,
-                name,
-                company,
-                isVegan,
-                isVegetarian,
-                wasTestedOnAnimals);
+        final Product.Status status;
+        if (isVegan) {
+            status = Product.Status.VEGAN;
+        } else if (isVegetarian) {
+            status = Product.Status.VEGETARIAN;
+        } else {
+            status = Product.Status.NOT_VEGETARIAN;
+        }
+
+        try {
+            return new Product(
+                    barcode,
+                    name,
+                    company,
+                    status,
+                    wasTestedOnAnimals);
+        } catch (final IllegalArgumentException e) {
+            App.logInfo(
+                    ServersProductsParser.class,
+                    "a product refused to be created, message:\n" + e.getMessage());
+            throw new ParseException("a product refused to be created", -1);
+        }
     }
 }

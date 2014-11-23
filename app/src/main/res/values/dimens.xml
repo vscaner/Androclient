@@ -1,4 +1,5 @@
 <resources>
     <dimen name="activity_content_horizontal_margin">10dp</dimen>
     <dimen name="buttons_layout_bottom_margin">40dp</dimen>
+    <dimen name="cardboard_activity_title_bottom_margin">15dp</dimen>
 </resources>

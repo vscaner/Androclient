@@ -14,6 +14,7 @@ import java.util.List;
 import vscanner.android.App;
 import vscanner.android.BarcodeToolkit;
 import vscanner.android.Product;
+import vscanner.android.network.http.Http;
 
 public class ProductLoader extends AsyncTaskLoader<ProductLoaderResultHolder> {
     private static final String REQUEST_URL = "http://lumeria.ru/vscaner/index.php";
@@ -37,7 +38,7 @@ public class ProductLoader extends AsyncTaskLoader<ProductLoaderResultHolder> {
     public ProductLoaderResultHolder loadInBackground() {
         final String serverResponse;
         try {
-            serverResponse = HTTP.post(REQUEST_URL, createPostParameters());
+            serverResponse = Http.post(REQUEST_URL, createPostParameters());
         } catch (final IOException e) {
             App.logError(this, e.getMessage());
             return ProductLoaderResultHolder.createWithNetworkError(barcode);

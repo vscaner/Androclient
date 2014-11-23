@@ -154,7 +154,7 @@ class ActivityLoadingState
                 final ProductLoaderResultHolder.ResultType resultType = resultHolder.getResultType();
 
                 if (resultType == ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT) {
-                    requestStateChangeTo(new ActivityProductNotFoundState(ActivityLoadingState.this));
+                    requestStateChangeTo(new ActivityProductNotFoundState(ActivityLoadingState.this, barcode));
                     return;
                 } else if (resultType != ProductLoaderResultHolder.ResultType.SUCCESS) {
                     getActivity().showToastWith(
