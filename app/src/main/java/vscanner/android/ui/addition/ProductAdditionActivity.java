@@ -104,7 +104,7 @@ public class ProductAdditionActivity extends CardboardActivityBase {
 
         if (resultHolder.getResultType() == HttpRequestResult.ResultType.SUCCESS) {
             showToastWith(R.string.product_addition_activity_on_request_successfully_delivered);
-            startActivity(new Intent(this, ScanActivity.class));
+            ScanActivity.startBy(this);
             finish();
         } else if (resultHolder.getResultType() == HttpRequestResult.ResultType.NETWORK_ERROR) {
             showToastWith(R.string.product_addition_activity_on_request_failed);

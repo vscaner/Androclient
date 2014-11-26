@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 
 import vscanner.android.App;
+import vscanner.android.network.http.HttpRequestResult;
 import vscanner.android.ui.CardboardActivityBase;
 
 /**
@@ -16,10 +17,6 @@ import vscanner.android.ui.CardboardActivityBase;
  * Maybe it will lose any sense in the future.
  */
 abstract class ScanActivityState {
-    public static interface Listener {
-        void onStateRequestsChangeTo(ScanActivityState otherState);
-    }
-
     private final ScanActivity scanActivity;
 
     protected final Resources getResources() {
@@ -94,4 +91,7 @@ abstract class ScanActivityState {
     }
 
     public abstract void onSaveStateData(final Bundle outState);
+
+    public void onHttpPostResult(final HttpRequestResult resultHolder) {
+    }
 }

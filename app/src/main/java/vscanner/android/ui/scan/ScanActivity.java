@@ -1,5 +1,6 @@
 package vscanner.android.ui.scan;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -8,17 +9,18 @@ import com.crashlytics.android.Crashlytics;
 
 import vscanner.android.App;
 import vscanner.android.R;
+import vscanner.android.network.http.HttpRequestResult;
 import vscanner.android.ui.CardboardActivityBase;
+import vscanner.android.ui.addition.ProductAdditionActivity;
 
 // TODO: handle back button?
-public class ScanActivity extends CardboardActivityBase implements ScanActivityState.Listener {
+public class ScanActivity extends CardboardActivityBase {
     private ScanActivityState state = new ActivityFirstState(this);
 
     public ScanActivityState getState() {
         return state;
     }
 
-    @Override
     public void onStateRequestsChangeTo(final ScanActivityState otherState) {
         this.state = otherState;
     }
@@ -63,5 +65,18 @@ public class ScanActivity extends CardboardActivityBase implements ScanActivityS
     protected void onNewIntent(final Intent intent) {
         super.onNewIntent(intent);
         state.requestStateChangeTo(new ActivityBeforeScanState(state));
+    }
+
+    @Override
+    protected void onHttpPostResult(final HttpRequestResult resultHolder) {
+        super.onHttpPostResult(resultHolder);
+        state.onHttpPostResult(resultHolder);
+    }
+
+
+    public static void startBy(final Context context) {
+        final Intent intent = new Intent(context, ScanActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
     }
 }

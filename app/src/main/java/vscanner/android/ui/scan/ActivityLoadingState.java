@@ -2,31 +2,31 @@ package vscanner.android.ui.scan;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.Loader;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import vscanner.android.App;
 import vscanner.android.BarcodeToolkit;
 import vscanner.android.Product;
 import vscanner.android.R;
-import vscanner.android.network.ProductLoader;
-import vscanner.android.network.ProductLoaderResultHolder;
+import vscanner.android.network.ParcelableNameValuePair;
+import vscanner.android.network.ServerConstants;
+import vscanner.android.network.ServersProductsParser;
+import vscanner.android.network.http.HttpRequestResult;
 import vscanner.android.ui.CardboardActivityBase;
 
 // TODO: this state should has some timeout - this would protect us from infinite progress bar
-class ActivityLoadingState
-        extends ScanActivityState
-        implements LoaderManager.LoaderCallbacks<ProductLoaderResultHolder> {
-    private static final int LOADER_ID = 1;
-    private static final String BARCODE_EXTRA = "LoadingState.BARCODE_EXTRA";
-    private static final String PRODUCT_EXTRA = "LoadingState.PRODUCT_EXTRA";
+class ActivityLoadingState extends ScanActivityState {
+    private static final String REQUEST_URL = "http://lumeria.ru/vscaner/index.php";
+    private static final String KEYS_START = ActivityLoadingState.class.getCanonicalName() + ".";
+    private static final String REQUEST_ID = KEYS_START + "PRODUCT_REQUEST";
+    private static final String BARCODE_EXTRA = KEYS_START + "BARCODE_EXTRA";
     private String barcode;
-    private Product loadedProduct;
     private boolean isViewInitialized;
 
     /**
@@ -48,17 +48,20 @@ class ActivityLoadingState
         }
         this.barcode = barcode;
 
-        startLoader();
+        requestProductDataFromServer();
         if (App.getFrontActivity() == getActivity()) {
             initView();
         }
     }
 
-    private void startLoader() {
-        final Bundle loaderBundle = new Bundle();
-        loaderBundle.putString(PRODUCT_EXTRA, barcode);
-        getActivity().getSupportLoaderManager().destroyLoader(LOADER_ID);
-        getActivity().getSupportLoaderManager().initLoader(LOADER_ID, loaderBundle, this).forceLoad();
+    private void requestProductDataFromServer() {
+        getActivity().sendHttpPostRequest(REQUEST_ID, REQUEST_URL, createPostParameters());
+    }
+
+    protected List<ParcelableNameValuePair> createPostParameters() {
+        final List<ParcelableNameValuePair> postParameters = new ArrayList<ParcelableNameValuePair>();
+        postParameters.add(new ParcelableNameValuePair("bcod", barcode));
+        return postParameters;
     }
 
     private void initView() {
@@ -92,17 +95,6 @@ class ActivityLoadingState
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        loadedProduct = (Product) savedInstanceState.getSerializable(PRODUCT_EXTRA);
-        if (loadedProduct != null) {
-            if (loadedProduct.isFullyInitialized()) {
-                requestStateChangeTo(new ActivityProductDescriptionState(this, loadedProduct));
-            } else {
-                App.assertCondition(false);
-                requestStateChangeTo(new ActivityBeforeScanState(this));
-            }
-            return;
-        }
-
         barcode = savedInstanceState.getString(BARCODE_EXTRA);
         if (!BarcodeToolkit.isValid(barcode)) {
             App.assertCondition(false);
@@ -111,7 +103,7 @@ class ActivityLoadingState
         }
 
         if (!getActivity().getSupportLoaderManager().hasRunningLoaders()) {
-            startLoader();
+            requestProductDataFromServer();
         }
     }
 
@@ -123,61 +115,52 @@ class ActivityLoadingState
     @Override
     public void onSaveStateData(final Bundle outState) {
         outState.putString(BARCODE_EXTRA, barcode);
-        outState.putSerializable(PRODUCT_EXTRA, loadedProduct);
         isViewInitialized = false;
     }
 
     @Override
     public void onResumeFragments() {
-        if (loadedProduct != null) {
-            requestStateChangeTo(new ActivityProductDescriptionState(this, loadedProduct));
-        } else {
-            if (!isViewInitialized) {
-                initView();
-            }
+        if (!isViewInitialized) {
+            initView();
         }
     }
 
     @Override
-    public Loader<ProductLoaderResultHolder> onCreateLoader(final int i, final Bundle bundle) {
-        return new ProductLoader(barcode, getActivity());
-    }
+    public void onHttpPostResult(final HttpRequestResult resultHolder) {
+        final HttpRequestResult.ResultType resultType = resultHolder.getResultType();
 
-    @Override
-    public void onLoadFinished(
-            final Loader<ProductLoaderResultHolder> productLoader,
-            final ProductLoaderResultHolder resultHolder) {
-        final Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                final ProductLoaderResultHolder.ResultType resultType = resultHolder.getResultType();
-
-                if (resultType == ProductLoaderResultHolder.ResultType.NO_SUCH_PRODUCT) {
-                    requestStateChangeTo(new ActivityProductNotFoundState(ActivityLoadingState.this, barcode));
-                    return;
-                } else if (resultType != ProductLoaderResultHolder.ResultType.SUCCESS) {
-                    getActivity().showToastWith(
-                            R.string.scan_activity_product_downloading_error_message);
-                    App.logError(this, "a task failed at downloading a product");
-                    requestStateChangeTo(new ActivityBeforeScanState(ActivityLoadingState.this));
-                    return;
-                }
-
-                if (App.getFrontActivity() == getActivity()) {
-                    requestStateChangeTo(
-                            new ActivityProductDescriptionState(
-                                    ActivityLoadingState.this,
-                                    resultHolder.getProduct()));
-                } else {
-                    loadedProduct = resultHolder.getProduct();
-                }
+        if (resultType != HttpRequestResult.ResultType.SUCCESS) {
+            onHttpPostFailed();
+            if (resultType != HttpRequestResult.ResultType.NETWORK_ERROR) {
+                App.error(
+                        "an element of "
+                                + HttpRequestResult.ResultType.class.getCanonicalName()
+                                + " is not handled");
             }
-        });
+            return;
+        }
+
+        final String serverResponse = resultHolder.getResponse();
+        if (serverResponse.equals(ServerConstants.RESPONSE_NO_SUCH_PRODUCT)) {
+            requestStateChangeTo(new ActivityProductNotFoundState(this, barcode));
+        } else {
+            final Product product;
+            try {
+                product = ServersProductsParser.parse(serverResponse, barcode);
+            } catch (final ParseException e) {
+                App.logInfo(this, "parsing of a product has failed", e);
+                onHttpPostFailed();
+                return;
+            }
+
+            requestStateChangeTo(new ActivityProductDescriptionState(this, product));
+        }
     }
 
-    @Override
-    public void onLoaderReset(final Loader<ProductLoaderResultHolder> resultHolder) {
-        // nothing to do
+    private void onHttpPostFailed() {
+        getActivity().showToastWith(
+                R.string.scan_activity_product_downloading_error_message);
+        App.logError(this, "a task failed at downloading a product");
+        requestStateChangeTo(new ActivityBeforeScanState(this));
     }
 }

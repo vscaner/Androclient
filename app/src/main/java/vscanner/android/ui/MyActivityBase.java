@@ -46,7 +46,7 @@ public abstract class MyActivityBase extends ActionBarActivity {
     /**
      * if any parameter is null, a call will do nothing
      */
-    protected final void sendHttpPostRequest(
+    public final void sendHttpPostRequest(
             final String requestId,
             final String url,
             final List<ParcelableNameValuePair> postParameters) {

@@ -5,7 +5,7 @@ import java.text.ParseException;
 import vscanner.android.App;
 import vscanner.android.Product;
 
-class ServersProductsParser {
+public final class ServersProductsParser {
     private static final char SEPARATOR_CHAR = '§';
     private static final String SEPARATOR_STRING = Character.toString(SEPARATOR_CHAR);
     private static final int VALID_SEPARATORS_COUNT = 6;
@@ -13,6 +13,9 @@ class ServersProductsParser {
     private ServersProductsParser() {
     }
 
+    /**
+     * @return fully initialized product (isFullyInitialized() == true), never null
+     */
     public static Product parse(final String encodedProduct, final String barcode) throws ParseException {
         App.logDebug(ServersProductsParser.class, encodedProduct);
 
