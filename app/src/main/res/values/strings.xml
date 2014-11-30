@@ -42,9 +42,9 @@
     <string name="product_addition_fragment_vegan_title">Веганский</string>
     <string name="product_addition_fragment_was_tested_on_animals_title">Тестировался на животных</string>
     <string name="product_addition_fragment_product_name_length_error_message">
-        Имя продукта должно быть длинее %d символов</string>
+        Имя продукта должно быть длиннее %d символов</string>
     <string name="product_addition_fragment_company_name_length_error_message">
-        Имя производителя должно быть длинее %d символов</string>
+        Имя производителя должно быть длиннее %d символов</string>
     <string name="product_addition_fragment_product_status_error_message">
         Не выбран статус продукта</string>
     <string name="product_addition_fragment_data_sending_fail_message">
@@ -55,8 +55,16 @@
         Запрос на добавление товара отправлен</string>
     <string name="product_addition_activity_on_request_successfully_delivered">
         Запрос на добавление товара успешно доставлен</string>
-    <string name="product_addition_activity_on_request_failed">
-        Произошла ошибка во время отправки запроса на сервер</string>
+
+    <string name="report_fragment_report_text_hint">Опишите проблему</string>
+    <string name="report_fragment_report_text_length_error_message">
+        Длина текста должна быть больше %d символов</string>
+
+    <string name="report_activity_title">Сообщите об ошибке</string>
+    <string name="report_activity_submit_request_sent_toast">
+        Сообщение об ошибке отправлено</string>
+    <string name="report_activity_on_request_successfully_delivered">
+        Сообщение об ошибке успешно доставлено</string>
 
     <string name="raw_scan_a_barcode_first">Сперва отсканируйте штих-код</string>
     <string name="raw_connecting_to_database">Соединение с базой</string>
@@ -68,5 +76,7 @@
     <string name="raw_touch_to_scan">Коснитесь для сканирования!</string>
     <string name="raw_submit">Опубликовать</string>
     <string name="raw_internal_error">Внутренняя ошибка</string>
+    <string name="raw_error_occurred_during_sending_request_to_the_server">
+        Произошла ошибка во время отправки запроса на сервер</string>
 
 </resources>

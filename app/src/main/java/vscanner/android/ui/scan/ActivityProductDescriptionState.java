@@ -8,6 +8,7 @@ import vscanner.android.App;
 import vscanner.android.Product;
 import vscanner.android.R;
 import vscanner.android.ui.CardboardActivityBase;
+import vscanner.android.ui.report.ReportActivity;
 
 class ActivityProductDescriptionState extends ScanActivityState {
     private static final String EXTRA_PRODUCT = "ProductDescriptionScanActivityState.EXTRA_PRODUCT";
@@ -44,7 +45,14 @@ class ActivityProductDescriptionState extends ScanActivityState {
         activity.putToTopSlot(createCowSaysFragmentFor(product));
         activity.setNewScanButtonVisibility(View.VISIBLE);
         activity.removeBottomButtons();
-        activity.addBottomButtonWith(R.string.scan_activity_report_button_text, null);
+        activity.addBottomButtonWith(
+                R.string.scan_activity_report_button_text,
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(final View view) {
+                        ReportActivity.startFor(product.getBarcode(), getActivity());
+                    }
+                });
 
         isViewInitialized = true;
     }

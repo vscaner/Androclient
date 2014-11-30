@@ -1,19 +1,21 @@
 package vscanner.android.ui.addition;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import java.util.Formatter;
+
 import vscanner.android.App;
 import vscanner.android.BarcodeToolkit;
 import vscanner.android.Product;
 import vscanner.android.R;
+import vscanner.android.ui.BarcodeHttpActionFragment;
 
-public class ProductAdditionFragment extends Fragment {
+public class ProductAdditionFragment extends BarcodeHttpActionFragment<Product> {
     private static final String BARCODE_EXTRA = "ProductAdditionFragment.BARCODE_EXTRA";
     private static final String COMPANY_NAME_EXTRA = "ProductAdditionFragment.COMPANY_NAME_EXTRA";
     private static final String PRODUCT_NAME_EXTRA = "ProductAdditionFragment.PRODUCT_NAME_EXTRA";
@@ -31,32 +33,34 @@ public class ProductAdditionFragment extends Fragment {
      * @throws java.lang.IllegalArgumentException if any argument is invalid.
      */
     public static ProductAdditionFragment createFor(final String barcode) {
-        if (BarcodeToolkit.isValid(barcode)) {
-            final ProductAdditionFragment instance = new ProductAdditionFragment();
-            instance.barcode = barcode;
-            return instance;
-        } else {
+        if (!BarcodeToolkit.isValid(barcode)) {
             throw new IllegalArgumentException("received barcode is invalid");
         }
+        final ProductAdditionFragment instance = new ProductAdditionFragment();
+        instance.barcode = barcode;
+        return instance;
     }
 
-    /**
-     * @return Error message if filled product can't be created because of invalid input data.<br>
-     * Returns null if the product is filled correctly.
-     */
-    public String getAdditionErrorMessage() {
+    @Override
+    public final String getErrorMessage() {
         final View root = getView();
         if (root != null) {
+            final Formatter formatter = new Formatter();
+
             final String companyName =
                     ((TextView) root.findViewById(R.id.textedit_company_name)).getText().toString();
             if (companyName.length() < MINIMUM_NAMES_LENGTH) {
-                return getString(R.string.product_addition_fragment_company_name_length_error_message);
+                final String message =
+                        getString(R.string.product_addition_fragment_company_name_length_error_message);
+                return formatter.format(message, MINIMUM_NAMES_LENGTH - 1).toString();
             }
 
             final String productName =
                     ((TextView) root.findViewById(R.id.textedit_product_name)).getText().toString();
             if (productName.length() < MINIMUM_NAMES_LENGTH) {
-                return getString(R.string.product_addition_fragment_product_name_length_error_message);
+                final String message =
+                        getString(R.string.product_addition_fragment_product_name_length_error_message);
+                return formatter.format(message, MINIMUM_NAMES_LENGTH - 1).toString();
             }
 
             if (checkedCow == CheckedCow.NONE) {
@@ -68,12 +72,10 @@ public class ProductAdditionFragment extends Fragment {
         return null;
     }
 
-    /**
-     * @return Filled product if the user input is correct, null otherwise.
-     */
-    public Product getProduct() {
+    @Override
+    public final Product getResult() {
         final View root = getView();
-        if (root != null && getAdditionErrorMessage() == null) {
+        if (root != null && getErrorMessage() == null) {
             final String companyName =
                     ((TextView) root.findViewById(R.id.textedit_company_name)).getText().toString();
 
@@ -92,7 +94,7 @@ public class ProductAdditionFragment extends Fragment {
                     status = Product.Status.VEGAN;
                     break;
                 case NONE:
-                    App.error("getAdditionErrorMessage() return null but status is invalid!");
+                    App.error("getErrorMessage() return null but status is invalid!");
                     status = Product.Status.NOT_VEGETARIAN;
                     break;
                 default:
@@ -236,9 +238,7 @@ public class ProductAdditionFragment extends Fragment {
                     WAS_TESTED_CHECKBOX_EXTRA,
                     ((CheckBox) root.findViewById(R.id.checkbox_was_tested_on_animals)).isChecked());
         } else {
-            final String message = "how the fragment is supposed to save its state with getView()==null?";
-            App.wtf(this, message);
-            App.assertCondition(false, message);
+            App.error(this, "how the fragment is supposed to save its state with getView()==null?");
         }
     }
 }

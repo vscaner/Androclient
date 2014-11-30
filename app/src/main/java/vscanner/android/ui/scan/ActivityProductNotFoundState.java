@@ -75,10 +75,10 @@ final class ActivityProductNotFoundState extends ScanActivityState {
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
-        initView();
         if (savedInstanceState != null) {
             barcode = savedInstanceState.getString(BARCODE_EXTRA);
         }
+        initView();
         App.assertCondition(BarcodeToolkit.isValid(barcode));
     }
 

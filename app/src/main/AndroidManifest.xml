@@ -23,6 +23,9 @@
             android:name="vscanner.android.ui.addition.ProductAdditionActivity"
             android:label="@string/app_name" />
         <service android:name="vscanner.android.network.http.HttpService" />
+        <activity
+            android:name="vscanner.android.ui.report.ReportActivity"
+            android:label="@string/app_name" />
         <meta-data
             android:name="com.crashlytics.ApiKey"
             android:value="de80313f5f43d719218414e4cc41762af7e4e352"/>
