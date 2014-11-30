@@ -83,6 +83,11 @@ public abstract class AppImpl {
         }
     }
 
+    public void error(final Object requester, final String message) {
+        logError(requester, message);
+        error(message);
+    }
+
     public boolean isOnline() {
         return false;
     }

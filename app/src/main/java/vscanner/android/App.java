@@ -80,6 +80,10 @@ public class App extends Application {
         impl.error(message);
     }
 
+    public static void error(final Object requester, final String message) {
+        impl.error(requester, message);
+    }
+
     public static boolean isOnline() {
         return impl.isOnline();
     }

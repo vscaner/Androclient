@@ -67,5 +67,6 @@
     <string name="raw_new_scan">Сканировать снова</string>
     <string name="raw_touch_to_scan">Коснитесь для сканирования!</string>
     <string name="raw_submit">Опубликовать</string>
+    <string name="raw_internal_error">Внутренняя ошибка</string>
 
 </resources>

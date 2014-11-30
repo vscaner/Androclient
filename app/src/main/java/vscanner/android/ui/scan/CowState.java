@@ -22,7 +22,7 @@ final class CowState implements Serializable {
     }
 
     public CowState() {
-        this(null, null, true);
+        this(null, null, false);
     }
 
     public CowState(

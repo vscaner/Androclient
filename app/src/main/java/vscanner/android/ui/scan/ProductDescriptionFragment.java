@@ -15,7 +15,16 @@ import vscanner.android.R;
 public class ProductDescriptionFragment extends Fragment {
     private Product product;
 
+    /**
+     * @param product must be not null and isFullyInitialized() == true
+     * @throws java.lang.IllegalArgumentException if product is invalid
+     */
     public static ProductDescriptionFragment create(final Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("product must not be null");
+        } else if (!product.isFullyInitialized()) {
+            throw new IllegalArgumentException("product must be fully initialized");
+        }
         final ProductDescriptionFragment fragment = new ProductDescriptionFragment();
         fragment.product = product;
         return fragment;
@@ -54,7 +63,8 @@ public class ProductDescriptionFragment extends Fragment {
                 animalsTestsText.setText(R.string.product_description_fragment_not_tested_on_animals_title);
             }
         } else {
-            App.logError(this, "product is null, invalid data will be shown");
+            App.error(this, "product is null, invalid data will be shown");
+            ((TextView) root.findViewById(R.id.text_barcode)).setText(R.string.raw_internal_error);
         }
 
         return root;
