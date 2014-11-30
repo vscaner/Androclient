@@ -16,7 +16,7 @@ import vscanner.android.ui.CardboardActivityBase;
  * conditions. <br>
  * Maybe it will lose any sense in the future.
  */
-abstract class ScanActivityState {
+public abstract class ScanActivityState {
     private final ScanActivity scanActivity;
 
     protected final Resources getResources() {
@@ -94,4 +94,39 @@ abstract class ScanActivityState {
 
     public void onHttpPostResult(final HttpRequestResult resultHolder) {
     }
+
+    public interface Restorer {
+        /**
+         * @return not null
+         * @param activity must never be null
+         * @throws java.lang.IllegalArgumentException if activity is null
+         * @throws java.lang.IllegalStateException if called when the activity is NOT in front
+         */
+        ScanActivityState restoreFor(final ScanActivity activity);
+
+        /**
+         * @return Whether the Restorer should be kept as the last one when new Restorers are
+         * being added to the stack and the stack reaches its size limit.<br>
+         * I.e. if this method would return <b>false</b> when the Restorer is last in the stack
+         * and a new Restorer is being added,
+         * then it (the last one) is going to be removed. But if <b>true</b> would be returned, then the Restorer
+         * is going to stay in the end of the stack <b>AND</b> the Restorer before the last one
+         * is going to be removed.<br>
+         * <b>NOTE</b> that this means that the first added to stack
+         * Restorer with (.doesStayLast() == true) will stay in the stack until the activity is paused.<br>
+         * <b>ALSO NOTE</b> that if there are just 2 Restorers left in a stack, if they both
+         * have the same class and both want to stay last,
+         * then <b>they both are going to be removed by one click of the
+         * back button</b>.<br>
+         * <i>wow, so many words about such a tiny method</i>
+         */
+        boolean doesStayLast();
+    }
+
+    /**
+     * @return a Restorer, which would recreate the ScanActivityState with
+     * condition it (the state) had on a moment of the call.<br>
+     * If a ScanActivityState does not support saving, the method should return null.
+     */
+    public abstract Restorer save();
 }

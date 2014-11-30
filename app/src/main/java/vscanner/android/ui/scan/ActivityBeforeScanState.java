@@ -13,7 +13,7 @@ import vscanner.android.ui.CardboardActivityBase;
 class ActivityBeforeScanState extends ScanActivityState {
     private boolean viewInitialized;
 
-    protected ActivityBeforeScanState(final ScanActivityState parent) {
+    ActivityBeforeScanState(final ScanActivityState parent) {
         super(parent);
         if (App.getFrontActivity() == getActivity()) {
             if (!viewInitialized) {
@@ -88,5 +88,31 @@ class ActivityBeforeScanState extends ScanActivityState {
     public void onSaveStateData(final Bundle outState) {
         viewInitialized = false;
         // nothing to do
+    }
+
+    private static final class Restorer implements ScanActivityState.Restorer {
+        @Override
+        public ScanActivityState restoreFor(final ScanActivity activity) {
+            if (activity == null) {
+                throw new IllegalArgumentException("activity must not be null");
+            } else if (activity != App.getFrontActivity()) {
+                throw new IllegalStateException("restoring state while activity is not in front!");
+            }
+            return new ActivityBeforeScanState(activity);
+        }
+        @Override
+        public boolean doesStayLast() {
+            return true;
+        }
+    }
+
+    private ActivityBeforeScanState(final ScanActivity activity) {
+        super(activity);
+        onResumeFragments();
+    }
+
+    @Override
+    public Restorer save() {
+        return new Restorer();
     }
 }

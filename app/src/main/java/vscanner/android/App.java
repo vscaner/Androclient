@@ -2,117 +2,94 @@ package vscanner.android;
 
 import android.app.Application;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.util.Log;
-
-import com.crashlytics.android.Crashlytics;
-
-import java.util.Arrays;
 
 import vscanner.android.ui.MyActivityBase;
 
 public class App extends Application {
-    private static Context context;
-    private static MyActivityBase currentActivity;
-
-    public static Context getContext() {
-        return context;
+    public static interface ImplCreator {
+        AppImpl create();
     }
 
-    public static String getStringWith(final int stringId) {
-        return context.getString(stringId);
-    }
-
-    public static String getName() {
-        return context.getString(R.string.app_name);
-    }
-
-    public static void logError(final Object requester, final String message) {
-        Log.e(getName(), requester.getClass().toString() + ": " + message);
-    }
-
-    public static void logDebug(final Object requester, final String message) {
-        Log.d(getName(), requester.getClass().toString() + ": " + message);
-    }
-
-    public static void logInfo(final Object requester, final String message) {
-        Log.i(getName(), requester.getClass().toString() + ": " + message);
-    }
-
-    public static void logInfo(final Object requester, final String message, final Exception e) {
-        Log.i(getName(), requester.getClass().toString() + ": " + message, e);
-    }
-
-    public static void wtf(final Object requester, final String message) {
-        Log.wtf(getName(), requester.getClass().toString() + ": " + message);
-    }
-
-    public static void assertCondition(final boolean condition) {
-        if (condition == false) {
-            if (BuildConfig.DEBUG) {
-                throw new AssertionError();
-            } else {
-                Crashlytics.log(
-                        "ASSERTATION FAILED!\n"
-                                + Arrays.toString(Thread.currentThread().getStackTrace()));
-            }
+    private static final class DefaultImplCreator implements ImplCreator {
+        @Override
+        public AppImpl create() {
+            return new DefaultAppImpl(applicationInstance);
         }
     }
 
-    public static void assertCondition(final boolean condition, final String message) {
-        if (condition == false) {
-            logError(App.class, message);
-            if (BuildConfig.DEBUG) {
-                throw new AssertionError();
-            } else {
-                Crashlytics.log(
-                        "ASSERTATION FAILED! message: '" + message + "'\n"
-                                + Arrays.toString(Thread.currentThread().getStackTrace()));
-            }
+    private static Application applicationInstance;
+    private static ImplCreator implCreator = new DefaultImplCreator();
+    private static AppImpl impl;
+
+    public static void setImplCreator(final ImplCreator implCreator) {
+        if (implCreator != null) {
+            App.implCreator = implCreator;
         }
-    }
-
-    public static void error(final String message) {
-        logError(App.class, message);
-        if (BuildConfig.DEBUG) {
-            throw new Error(message);
-        } else {
-            Crashlytics.log(
-                    "ERROR! message: '" + message + "'\n"
-                            + Arrays.toString(Thread.currentThread().getStackTrace()));
-        }
-    }
-
-    public static boolean isOnline() {
-        final ConnectivityManager connectivityManager =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-
-        return networkInfo != null && networkInfo.isConnected();
     }
 
     @Override
     public void onCreate() {
-        context = getApplicationContext();
-        com.google.zxing.integration.android.IntentIntegrator.titleStringId =
-                R.string.barcode_app_install_request_title;
-        com.google.zxing.integration.android.IntentIntegrator.messageStringId =
-                R.string.barcode_app_install_request_message;
-        com.google.zxing.integration.android.IntentIntegrator.yesStringId =
-                R.string.barcode_app_install_request_reply_yes;
-        com.google.zxing.integration.android.IntentIntegrator.noStringId =
-                R.string.barcode_app_install_request_reply_no;
-    }
-
-    public static void onActivityPause(final MyActivityBase activity) {
-        if (currentActivity == activity) {
-            currentActivity = null;
+        applicationInstance = this;
+        impl = implCreator.create();
+        if (impl == null) {
+            throw new Error("wtf, implCreator created null!");
         }
     }
 
+    public static Context getContext() {
+        return impl.getContext();
+    }
+
+    public static String getStringWith(final int stringId) {
+        return impl.getStringWith(stringId);
+    }
+
+    public static String getName() {
+        return impl.getName();
+    }
+
+    public static void logError(final Object requester, final String message) {
+        impl.logError(requester, message);
+    }
+
+    public static void logDebug(final Object requester, final String message) {
+        impl.logDebug(requester, message);
+    }
+
+    public static void logInfo(final Object requester, final String message) {
+        impl.logInfo(requester, message);
+    }
+
+    public static void logInfo(final Object requester, final String message, final Exception e) {
+        impl.logInfo(requester, message, e);
+    }
+
+    public static void wtf(final Object requester, final String message) {
+        impl.wtf(requester, message);
+    }
+
+    public static void assertCondition(final boolean condition) {
+        impl.assertCondition(condition);
+    }
+
+    public static void assertCondition(final boolean condition, final String message) {
+        impl.assertCondition(condition, message);
+    }
+
+    public static void error(final String message) {
+        impl.error(message);
+    }
+
+    public static boolean isOnline() {
+        return impl.isOnline();
+    }
+
+    public static void onActivityPause(final MyActivityBase activity) {
+        impl.onActivityPause(activity);
+    }
+
     public static void onActivityResumeFragments(final MyActivityBase activity) {
-        currentActivity = activity;
+        impl.onActivityResumeFragments(activity);
     }
 
     /**
@@ -123,6 +100,6 @@ public class App extends Application {
      * @return front activity
      */
     public static MyActivityBase getFrontActivity() {
-        return currentActivity;
+        return impl.getFrontActivity();
     }
 }

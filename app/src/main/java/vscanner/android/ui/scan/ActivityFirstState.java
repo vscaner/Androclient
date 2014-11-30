@@ -8,7 +8,7 @@ import vscanner.android.App;
 final class ActivityFirstState extends ScanActivityState {
     public static final String STATE_NAME_EXTRA = "FirstState.STATE_NAME_EXTRA";
 
-    protected ActivityFirstState(final ScanActivity scanActivity) {
+    public ActivityFirstState(final ScanActivity scanActivity) {
         super(scanActivity);
     }
 
@@ -59,5 +59,10 @@ final class ActivityFirstState extends ScanActivityState {
     public void onResumeFragments() {
         // This state is supposed only to switch to another state.
         App.assertCondition(false);
+    }
+
+    @Override
+    public Restorer save() {
+        return null;
     }
 }

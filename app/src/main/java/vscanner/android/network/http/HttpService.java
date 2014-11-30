@@ -41,12 +41,12 @@ public class HttpService extends IntentService {
             requestResult = HttpRequestResult.createWithNetworkError(requestId, e.getMessage());
         }
 
+        MEMORY.memorize(requestResult);
+
         final List<Listener> listenersCopy = new ArrayList<Listener>(LISTENERS);
         for (final Listener listener : listenersCopy) {
             listener.onHttpPostResult(requestResult);
         }
-
-        MEMORY.memorize(requestResult);
     }
 
     public static HttpRequestResult popLastRequestResultWith(final String requestId) {

@@ -25,6 +25,7 @@ public abstract class MyActivityBase extends ActionBarActivity {
     private final class HttpServiceListener implements HttpService.Listener {
         @Override
         public void onHttpPostResult(final HttpRequestResult resultHolder) {
+            HttpService.popLastRequestResultWith(resultHolder.getRequestId());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

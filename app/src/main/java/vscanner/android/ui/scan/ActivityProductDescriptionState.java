@@ -94,4 +94,34 @@ class ActivityProductDescriptionState extends ScanActivityState {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         App.assertCondition(false);
     }
+
+    private static final class Restorer implements ScanActivityState.Restorer {
+        private final Product product;
+        public Restorer(final Product product) {
+            this.product = product;
+        }
+        @Override
+        public ScanActivityState restoreFor(final ScanActivity activity) {
+            if (activity == null) {
+                throw new IllegalArgumentException("activity must not be null");
+            } else if (activity != App.getFrontActivity()) {
+                throw new IllegalStateException("restoring state while activity is not in front!");
+            }
+            return new ActivityProductDescriptionState(activity, product);
+        }
+        @Override
+        public boolean doesStayLast() {
+            return false;
+        }
+    }
+
+    private ActivityProductDescriptionState(final ScanActivity activity, final Product product) {
+        super(activity);
+        this.product = product;
+        initializeViewBy(product);
+    }
+
+    public Restorer save() {
+        return new Restorer(product);
+    }
 }

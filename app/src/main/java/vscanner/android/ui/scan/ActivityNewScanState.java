@@ -12,8 +12,7 @@ import vscanner.android.BarcodeToolkit;
 import vscanner.android.R;
 
 final class ActivityNewScanState extends ScanActivityState {
-
-    protected ActivityNewScanState(final ScanActivityState parent, final boolean isRecreated) {
+    ActivityNewScanState(final ScanActivityState parent, final boolean isRecreated) {
         super(parent);
 
         if (!isRecreated) {
@@ -69,5 +68,10 @@ final class ActivityNewScanState extends ScanActivityState {
     @Override
     public void onResumeFragments() {
         // nothing to do
+    }
+
+    @Override
+    public Restorer save() {
+        return null;
     }
 }

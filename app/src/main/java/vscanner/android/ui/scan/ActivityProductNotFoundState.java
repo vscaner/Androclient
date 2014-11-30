@@ -13,6 +13,7 @@ import vscanner.android.ui.CardboardActivityBase;
 import vscanner.android.ui.UIConstants;
 import vscanner.android.ui.addition.ProductAdditionActivity;
 
+// TODO: display the barcode
 final class ActivityProductNotFoundState extends ScanActivityState {
     private static final String BARCODE_EXTRA = "ActivityProductNotFoundState.BARCODE_EXTRA";
     private String barcode;
@@ -122,5 +123,35 @@ final class ActivityProductNotFoundState extends ScanActivityState {
     public void onSaveStateData(final Bundle outState) {
         isViewInitialized = false;
         outState.putString(BARCODE_EXTRA, barcode);
+    }
+
+    private static final class Restorer implements ScanActivityState.Restorer {
+        private final String barcode;
+        public Restorer(final String barcode) {
+            this.barcode = barcode;
+        }
+        @Override
+        public ScanActivityState restoreFor(final ScanActivity activity) {
+            if (activity == null) {
+                throw new IllegalArgumentException("activity must not be null");
+            } else if (activity != App.getFrontActivity()) {
+                throw new IllegalStateException("restoring state while activity is not in front!");
+            }
+            return new ActivityProductNotFoundState(activity, barcode);
+        }
+        @Override
+        public boolean doesStayLast() {
+            return false;
+        }
+    }
+
+    private ActivityProductNotFoundState(final ScanActivity activity, final String barcode) {
+        super(activity);
+        this.barcode = barcode;
+        initView();
+    }
+
+    public Restorer save() {
+        return new Restorer(barcode);
     }
 }

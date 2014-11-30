@@ -32,7 +32,7 @@ class ActivityLoadingState extends ScanActivityState {
     /**
      * must be called only before onCreate() call
      */
-    public ActivityLoadingState(final ScanActivityState parent) {
+    ActivityLoadingState(final ScanActivityState parent) {
         super(parent);
         App.assertCondition(App.getFrontActivity() != getActivity());
     }
@@ -41,7 +41,7 @@ class ActivityLoadingState extends ScanActivityState {
      * @param barcode must be a valid barcode (ie BarcodeToolkit.isValid(barcode) == true)
      * @throws IllegalArgumentException if any parameter is invalid
      */
-    public ActivityLoadingState(final ScanActivityState parent, final String barcode) {
+    ActivityLoadingState(final ScanActivityState parent, final String barcode) {
         super(parent);
         if (!BarcodeToolkit.isValid(barcode)) {
             throw new IllegalArgumentException("barcode is not valid");
@@ -162,5 +162,10 @@ class ActivityLoadingState extends ScanActivityState {
                 R.string.scan_activity_product_downloading_error_message);
         App.logError(this, "a task failed at downloading a product");
         requestStateChangeTo(new ActivityBeforeScanState(this));
+    }
+
+    @Override
+    public Restorer save() {
+        return null;
     }
 }

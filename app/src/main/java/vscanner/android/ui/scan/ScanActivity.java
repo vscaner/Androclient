@@ -7,22 +7,74 @@ import android.view.View;
 
 import com.crashlytics.android.Crashlytics;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.List;
+import java.util.Queue;
+
 import vscanner.android.App;
 import vscanner.android.R;
 import vscanner.android.network.http.HttpRequestResult;
 import vscanner.android.ui.CardboardActivityBase;
 import vscanner.android.ui.addition.ProductAdditionActivity;
 
-// TODO: handle back button?
 public class ScanActivity extends CardboardActivityBase {
-    private ScanActivityState state = new ActivityFirstState(this);
+    public static final int MAX_STATES_RESTORERS_COUNT = 4;
+
+    public static interface FirstStateCreator {
+        ScanActivityState createFor(final ScanActivity activity);
+    }
+
+    private static FirstStateCreator firstStateCreator = new FirstStateCreator() {
+        @Override
+        public ScanActivityState createFor(final ScanActivity activity) {
+            return new ActivityFirstState(activity);
+        }
+    };
+    private final Deque<ScanActivityState.Restorer> stateRestorers =
+            new ArrayDeque<ScanActivityState.Restorer>();
+    private ScanActivityState state = firstStateCreator.createFor(this);
+
+
+    public static void setFirstStateCreator(final FirstStateCreator firstStateCreator) {
+        ScanActivity.firstStateCreator = firstStateCreator;
+    }
+
+    public static void startBy(final Context context) {
+        final Intent intent = new Intent(context, ScanActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(intent);
+    }
 
     public ScanActivityState getState() {
         return state;
     }
 
     public void onStateRequestsChangeTo(final ScanActivityState otherState) {
+        App.assertCondition(otherState != null, "requested to change state to null");
+
+        final ScanActivityState.Restorer newRestorer = this.state.save();
+
+        if (newRestorer != null) {
+            stateRestorers.offerFirst(newRestorer);
+            validateRestorersCount();
+        }
         this.state = otherState;
+    }
+
+    private void validateRestorersCount() {
+        if (stateRestorers.size() > MAX_STATES_RESTORERS_COUNT) {
+            final ScanActivityState.Restorer lastRestorer = stateRestorers.pollLast();
+            if (lastRestorer.doesStayLast()) {
+                stateRestorers.pollLast();
+                stateRestorers.addLast(lastRestorer);
+            }
+        }
+    }
+
+    public Deque<ScanActivityState.Restorer> getRestorersCopy() {
+        return new ArrayDeque<ScanActivityState.Restorer>(stateRestorers);
     }
 
     @Override
@@ -73,10 +125,37 @@ public class ScanActivity extends CardboardActivityBase {
         state.onHttpPostResult(resultHolder);
     }
 
+    @Override
+    public void onBackPressed() {
+        if (!stateRestorers.isEmpty()) {
+            tryCollapsingLastRestorers();
 
-    public static void startBy(final Context context) {
-        final Intent intent = new Intent(context, ScanActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(intent);
+            final ScanActivityState.Restorer restorer = stateRestorers.pollFirst();
+            state = restorer.restoreFor(this);
+
+            App.assertCondition(
+                    state != null,
+                    "current "
+                            + ScanActivityState.class.getCanonicalName()
+                            + " is null! Something horrible will happen soon!");
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    private void tryCollapsingLastRestorers() {
+        if (stateRestorers.size() == 2) {
+            final ScanActivityState.Restorer beforeLastRestorer = stateRestorers.pollFirst();
+            final ScanActivityState.Restorer lastRestorer = stateRestorers.pollFirst();
+
+            if (lastRestorer.doesStayLast()
+                    && beforeLastRestorer.doesStayLast()
+                    && lastRestorer.getClass() == beforeLastRestorer.getClass()) {
+                stateRestorers.addFirst(beforeLastRestorer);
+            } else {
+                stateRestorers.addFirst(lastRestorer);
+                stateRestorers.addFirst(beforeLastRestorer);
+            }
+        }
     }
 }
