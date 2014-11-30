@@ -3,14 +3,15 @@ package com.google.zxing.integration.android;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -97,11 +98,10 @@ public class IntentIntegrator {
     public static final int REQUEST_CODE = 0x0000c0de; // Only use bottom 16 bits
     private static final String TAG = IntentIntegrator.class.getSimpleName();
 
-    public static final String DEFAULT_TITLE = "Установим?";
-    public static final String DEFAULT_MESSAGE =
-            "Для корректной работы нашего веганского приложения, необходим компонент распознования штрих-кода,он абсолютно бесплатный";
-    public static final String DEFAULT_YES = "Да";
-    public static final String DEFAULT_NO = "Нет";
+    public static int titleStringId = 0;
+    public static int messageStringId = 0;
+    public static int yesStringId = 0;
+    public static int noStringId = 0;
 
     private static final String BS_PACKAGE = "com.google.zxing.client.android";
     private static final String BSPLUS_PACKAGE = "com.srowen.bs.android";
@@ -140,7 +140,7 @@ public class IntentIntegrator {
     public IntentIntegrator(Activity activity) {
         this.activity = activity;
         this.fragment = null;
-        initializeConfiguration();
+        initializeConfiguration(this.activity);
     }
 
     /**
@@ -151,14 +151,14 @@ public class IntentIntegrator {
     public IntentIntegrator(Fragment fragment) {
         this.activity = fragment.getActivity();
         this.fragment = fragment;
-        initializeConfiguration();
+        initializeConfiguration(this.activity);
     }
 
-    private void initializeConfiguration() {
-        title = DEFAULT_TITLE;
-        message = DEFAULT_MESSAGE;
-        buttonYes = DEFAULT_YES;
-        buttonNo = DEFAULT_NO;
+    private void initializeConfiguration(Context context) {
+        title = context.getString(titleStringId);
+        message = context.getString(messageStringId);
+        buttonYes = context.getString(yesStringId);
+        buttonNo = context.getString(noStringId);
         targetApplications = TARGET_ALL_KNOWN;
     }
 

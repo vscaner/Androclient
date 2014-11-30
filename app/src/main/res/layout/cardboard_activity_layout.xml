@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="vscanner.android.ui.CardboardActivityBase">
+
+    <include layout="@layout/cardboard_activity_background_layout"/>
+
+    <Button
+        android:id="@+id/button_new_scan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="11dp"
+        android:background="@drawable/backgroundless_button_selector"
+        android:drawableLeft="@drawable/icon_new_scan"
+        android:drawablePadding="6dp"
+        android:text="@string/raw_new_scan"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:id="@+id/top_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+        <RelativeLayout
+            android:id="@+id/middle_content_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.75"/>
+        <LinearLayout
+            android:id="@+id/buttons_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.75"
+            android:orientation="horizontal"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/progress_foreground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#50404040"
+        android:visibility="gone"
+        android:clickable="true">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+</FrameLayout>
